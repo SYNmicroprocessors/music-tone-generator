@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 1   
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:33:36 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE 8051_SPI
@@ -62,23 +62,23 @@ line level    source
   52   1        upper_bits = (data1>>8)&00001111;         // obtain the upper 4 bits 
   53   1        upper_bits = upper_bits || 00100000;          //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl
              -/
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 2   
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:33:36 PAGE 2   
 
   54   1        //now obtain the lower 8 bits
   55   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
   56   1        CS_BAR=0;
   57   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
-  58   1          while(10000000!=10000000&SPSTA);  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-  59   1          //transmit_completed = 0;     // clear software transfert flag
+  58   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  59   1          transmit_completed = 0;     // clear software transfert flag
   60   1        SPDAT=lower_bits;           // sending the lower 8 bits serially   
-  61   1          while(10000000!=10000000&SPSTA);  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-  62   1          //transmit_completed = 0;     // clear software transfert flag 
+  61   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  62   1          transmit_completed = 0;     // clear software transfert flag 
   63   1        CS_BAR=1;
   64   1      
   65   1      }
   66          
   67          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-  68          {
+  68          { LED5 =1;
   69   1        switch  ( SPSTA )         /* read and clear spi status register */
   70   1        {
   71   2          case 0x80:
@@ -93,21 +93,24 @@ line level    source
   80   2          case 0x40:
   81   2               /* put here for overrun tasking */ 
   82   2          break;
-  83   2        }
-  84   1      }
-  85          void Delay(int delay)
-  86          {
-  87   1        int d=0;
-  88   1        while(delay>0)
-  89   1        {
-  90   2          for(d=0;d<20;d++);
-  91   2          delay--;
-  92   2        }
-  93   1      }
+  83   2          
+  84   2        }
+  85   1        Delay(10000);
+  86   1        LED5=0;
+  87   1      }
+  88          void Delay(int delay)
+  89          {
+  90   1        int d=0;
+  91   1        while(delay>0)
+  92   1        {
+  93   2          for(d=0;d<20;d++);
+  94   2          delay--;
+  95   2        }
+  96   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    130    ----
+   CODE SIZE        =    191    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

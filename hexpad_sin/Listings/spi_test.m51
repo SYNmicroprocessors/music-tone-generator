@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        10/02/2017  00:22:51  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/02/2017  00:33:37  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -34,12 +34,12 @@ LINK MAP OF MODULE:  .\Objects\spi_test (8051_SPI)
             CODE    004BH     0003H     ABSOLUTE     
                     004EH     07B2H                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     0021H     UNIT         ?PR?_DELAY?8051_SPI
-            CODE    08ADH     001CH     UNIT         ?PR?IT_SPI?8051_SPI
-            CODE    08C9H     001AH     UNIT         ?PR?MAIN?8051_SPI
-            CODE    08E3H     001AH     UNIT         ?PR?SPI_INIT?8051_SPI
-            CODE    08FDH     0011H     UNIT         ?PR?_DAC?8051_SPI
-            CODE    090EH     0003H     UNIT         ?C_INITSEG
+            CODE    088CH     004FH     UNIT         ?PR?IT_SPI?8051_SPI
+            CODE    08DBH     0021H     UNIT         ?PR?_DELAY?8051_SPI
+            CODE    08FCH     001BH     UNIT         ?PR?_DAC?8051_SPI
+            CODE    0917H     001AH     UNIT         ?PR?MAIN?8051_SPI
+            CODE    0931H     001AH     UNIT         ?PR?SPI_INIT?8051_SPI
+            CODE    094BH     0003H     UNIT         ?C_INITSEG
 
 
 
@@ -49,17 +49,22 @@ OVERLAY MAP OF MODULE:   .\Objects\spi_test (8051_SPI)
 SEGMENT
   +--> CALLED SEGMENT
 ---------------------
+?PR?IT_SPI?8051_SPI
+  +--> ?PR?_DELAY?8051_SPI
+
+*** NEW ROOT ***************************************************
+
 ?C_C51STARTUP
   +--> ?PR?MAIN?8051_SPI
   +--> ?C_INITSEG
 
 ?PR?MAIN?8051_SPI
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:33:37  PAGE 2
+
+
   +--> ?PR?SPI_INIT?8051_SPI
   +--> ?PR?_DAC?8051_SPI
   +--> ?PR?_DELAY?8051_SPI
-
-
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:22:51  PAGE 2
 
 
 
@@ -78,6 +83,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\spi_test (8051_SPI)
   D:00C0H         PUBLIC        P4
   D:00C3H         PUBLIC        SPCON
   B:00A8H.7       PUBLIC        EA
+  B:0090H.5       PUBLIC        LED5
   B:0090H.7       PUBLIC        LED7
   D:00C4H         PUBLIC        SPSTA
   D:00A8H         PUBLIC        IEN0
@@ -85,43 +91,43 @@ SYMBOL TABLE OF MODULE:  .\Objects\spi_test (8051_SPI)
   D:00B8H         PUBLIC        IPL0
   B:0020H.0       PUBLIC        transmit_completed
   D:00D8H         PUBLIC        CCON
-  C:08C9H         PUBLIC        main
-  C:08FDH         PUBLIC        _dac
-  C:08ADH         PUBLIC        it_SPI
+  C:0917H         PUBLIC        main
+  C:08FCH         PUBLIC        _dac
+  C:088CH         PUBLIC        it_SPI
   D:0098H         PUBLIC        SCON
   D:0088H         PUBLIC        TCON
   B:0090H.4       PUBLIC        CS_BAR
   D:00F8H         PUBLIC        UEPINT
-  C:08E3H         PUBLIC        SPI_Init
+  C:0931H         PUBLIC        SPI_Init
   D:00C8H         PUBLIC        T2CON
-  C:088CH         PUBLIC        _Delay
+  C:08DBH         PUBLIC        _Delay
   D:00C5H         PUBLIC        SPDAT
   -------         PROC          MAIN
-  C:08C9H         LINE#         13
-  C:08C9H         LINE#         14
-  C:08C9H         LINE#         15
-  C:08CCH         LINE#         16
-  C:08CEH         LINE#         18
-  C:08D1H         LINE#         22
-  C:08DFH         LINE#         23
-  C:08E1H         LINE#         27
+  C:0917H         LINE#         13
+  C:0917H         LINE#         14
+  C:0917H         LINE#         15
+  C:091AH         LINE#         16
+  C:091CH         LINE#         18
+  C:091FH         LINE#         22
+  C:092DH         LINE#         23
+  C:092FH         LINE#         27
   -------         ENDPROC       MAIN
   -------         PROC          SPI_INIT
-  C:08E3H         LINE#         32
-  C:08E3H         LINE#         33
-  C:08E3H         LINE#         34
-  C:08E5H         LINE#         35
-  C:08E8H         LINE#         36
-  C:08EBH         LINE#         37
-  C:08EEH         LINE#         38
-  C:08F1H         LINE#         39
-  C:08F4H         LINE#         40
-  C:08F7H         LINE#         41
-  C:08F9H         LINE#         42
-  C:08FCH         LINE#         43
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:22:51  PAGE 3
+  C:0931H         LINE#         32
+  C:0931H         LINE#         33
+  C:0931H         LINE#         34
+  C:0933H         LINE#         35
+  C:0936H         LINE#         36
+  C:0939H         LINE#         37
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:33:37  PAGE 3
 
 
+  C:093CH         LINE#         38
+  C:093FH         LINE#         39
+  C:0942H         LINE#         40
+  C:0945H         LINE#         41
+  C:0947H         LINE#         42
+  C:094AH         LINE#         43
   -------         ENDPROC       SPI_INIT
   -------         PROC          _DAC
   D:0004H         SYMBOL        data1
@@ -129,57 +135,62 @@ SYMBOL TABLE OF MODULE:  .\Objects\spi_test (8051_SPI)
   D:0007H         SYMBOL        upper_bits
   D:0006H         SYMBOL        lower_bits
   -------         ENDDO         
-  C:08FDH         LINE#         46
-  C:08FFH         LINE#         47
-  C:08FFH         LINE#         52
-  C:08FFH         LINE#         53
-  C:0903H         LINE#         55
-  C:0905H         LINE#         56
-  C:0907H         LINE#         57
-  C:0909H         LINE#         58
-  C:0909H         LINE#         60
-  C:090BH         LINE#         61
-  C:090BH         LINE#         63
-  C:090DH         LINE#         65
+  C:08FCH         LINE#         46
+  C:08FEH         LINE#         47
+  C:08FEH         LINE#         52
+  C:08FEH         LINE#         53
+  C:0902H         LINE#         55
+  C:0904H         LINE#         56
+  C:0906H         LINE#         57
+  C:0908H         LINE#         58
+  C:090BH         LINE#         59
+  C:090DH         LINE#         60
+  C:090FH         LINE#         61
+  C:0912H         LINE#         62
+  C:0914H         LINE#         63
+  C:0916H         LINE#         65
   -------         ENDPROC       _DAC
   -------         PROC          IT_SPI
-  C:08ADH         LINE#         67
-  C:08B6H         LINE#         69
-  C:08BDH         LINE#         70
-  C:08BDH         LINE#         71
-  C:08BDH         LINE#         72
-  C:08C0H         LINE#         73
-  C:08C2H         LINE#         74
-  C:08C2H         LINE#         76
-  C:08C2H         LINE#         78
-  C:08C2H         LINE#         80
-  C:08C2H         LINE#         82
-  C:08C2H         LINE#         83
-  C:08C2H         LINE#         84
+  C:088CH         LINE#         67
+  C:08A9H         LINE#         68
+  C:08ABH         LINE#         69
+  C:08B2H         LINE#         70
+  C:08B2H         LINE#         71
+  C:08B2H         LINE#         72
+  C:08B5H         LINE#         73
+  C:08B7H         LINE#         74
+  C:08B7H         LINE#         76
+  C:08B7H         LINE#         78
+  C:08B7H         LINE#         80
+  C:08B7H         LINE#         82
+  C:08B7H         LINE#         84
+  C:08B7H         LINE#         85
+  C:08BEH         LINE#         86
+  C:08C0H         LINE#         87
   -------         ENDPROC       IT_SPI
   -------         PROC          _DELAY
   D:0006H         SYMBOL        delay
   -------         DO            
   D:0004H         SYMBOL        d
   -------         ENDDO         
-  C:088CH         LINE#         85
-  C:088CH         LINE#         86
-  C:088CH         LINE#         87
-  C:088CH         LINE#         88
-  C:0897H         LINE#         89
-  C:0897H         LINE#         90
-  C:08A5H         LINE#         91
-  C:08AAH         LINE#         92
-  C:08ACH         LINE#         93
+  C:08DBH         LINE#         88
+  C:08DBH         LINE#         89
+  C:08DBH         LINE#         90
+  C:08DBH         LINE#         91
+  C:08E6H         LINE#         92
+  C:08E6H         LINE#         93
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:33:37  PAGE 4
+
+
+  C:08F4H         LINE#         94
+  C:08F9H         LINE#         95
+  C:08FBH         LINE#         96
   -------         ENDPROC       _DELAY
   -------         ENDMOD        8051_SPI
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0087H BYTE ( 6%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00C4H BYTE ( 9%) *
 ******************************************************************************
 
-Program Size: data=10.1 xdata=0 code=279
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/02/2017  00:22:51  PAGE 4
-
-
+Program Size: data=10.1 xdata=0 code=340
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

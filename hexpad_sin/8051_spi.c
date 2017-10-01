@@ -55,17 +55,17 @@ void dac(unsigned int data1)
 	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
 	CS_BAR=0;
 	SPDAT=upper_bits;													// sending the upper 8 bits serially     
-		while(10000000!=10000000&SPSTA);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		//transmit_completed = 0;    	// clear software transfert flag
+		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+		transmit_completed = 0;    	// clear software transfert flag
 	SPDAT=lower_bits;						// sending the lower 8 bits serially   
-		while(10000000!=10000000&SPSTA);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		//transmit_completed = 0;    	// clear software transfert flag 
+		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+		transmit_completed = 0;    	// clear software transfert flag 
 	CS_BAR=1;
 
 }
 
 void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-{
+{	LED5 =1;
 	switch	( SPSTA )         /* read and clear spi status register */
 	{
 		case 0x80:
@@ -80,7 +80,10 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 		case 0x40:
          /* put here for overrun tasking */	
 		break;
+		
 	}
+	Delay(10000);
+	LED5=0;
 }
 void Delay(int delay)
 {
