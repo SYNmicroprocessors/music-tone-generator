@@ -1,0 +1,3 @@
+".\Objects\8051_spi.obj" 
+TO ".\Objects\spi_test" 
+PRINT(".\Listings\spi_test.m51") RAMSIZE(256) 

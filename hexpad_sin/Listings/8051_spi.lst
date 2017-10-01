@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 22:31:41 PAGE 1   
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:05:27 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE 8051_SPI
@@ -11,192 +11,105 @@ line level    source
    1          #include "at89c5131.h"
    2          #include "stdio.h"
    3          
-   4          sbit CS_BAR = P1^4;                 // Chip Select for the ADC
-   5          void SPI_Init();
-   6          void dac(unsigned int data1);
-   7          void Delay(int delay);
-   8          
-   9          void main(void)
-  10          {
-  11   1        P3 = 0X00;                      // Make Port 3 output 
-  12   1        P2 = 0x00;                      // Make Port 2 output 
-  13   1        P1 &= 0xEF;                     // Make P1 Pin4-7 output
-  14   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
-  15   1        
-  16   1      SPI_Init();
-  17   1       while(1)
-  18   1         {
-  19   2           dac(255);Delay(10000);
-  20   2           dac(177);Delay(10000);
-  21   2         }
-  22   1      }
-  23          
-  24          
+   4          bit transmit_completed=0;
+   5          sbit CS_BAR = P1^4; 
+   6          unsigned char serial_data;                // Chip Select for the ADC
+   7          void SPI_Init();
+   8          void dac(unsigned int data1);
+   9          void Delay(int delay);
+  10          
+  11          void main(void)
+  12          {
+  13   1        P3 = 0X00;                      // Make Port 3 output 
+  14   1        P2 = 0x00;                      // Make Port 2 output 
+  15   1        P1 &= 0xEF;                     // Make P1 Pin4-7 output
+  16   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+  17   1      
+  18   1      SPI_Init();
+  19   1       while(1)
+  20   1         {
+  21   2           dac(255);Delay(10000);
+  22   2           dac(177);Delay(10000);
+  23   2         }
+  24   1      }
   25          
-  26          void SPI_Init()
-  27          {
-  28   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
-  29   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
-  30   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
-  31   1        SPCON |= 0x10;                  // Master mode 
-  32   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
-  33   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
-  34   1        IEN1 |= 0x04;                   // enable spi interrupt 
-  35   1        EA=1;                           // enable interrupts 
-  36   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
-  37   1      }
-  38          
-  39          
-  40          void dac(unsigned int data1)
-  41          {
-  42   1        unsigned char lower_bits;
-  43   1        unsigned char upper_bits;  
-*** ERROR C100 IN LINE 43 OF 8051_spi.c: unprintable character 0xA0 skipped
-  44   1      
-  45   1        //first obtain the upper 8 bits
-  46   1      upper_bits = (data1>>8)&00001111;                        // obtain the upper 4 bits 
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 22:31:41 PAGE 2   
+  26          
+  27          
+  28          void SPI_Init()
+  29          {
+  30   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
+  31   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  32   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  33   1        SPCON |= 0x10;                  // Master mode 
+  34   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  35   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  36   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  37   1        EA=1;                           // enable interrupts 
+  38   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+  39   1      }
+  40          
+  41          
+  42          void dac(unsigned int data1)
+  43          {
+  44   1        unsigned char upper_bits;
+  45   1        unsigned char lower_bits; 
+  46   1      
+  47   1        //first obtain the upper 8 bits
+  48   1        upper_bits = (data1>>8)&00001111;         // obtain the upper 4 bits 
+  49   1        upper_bits = upper_bits || 00100000;          //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl
+             -/
+  50   1        //now obtain the lower 8 bits
+  51   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
+  52   1        CS_BAR=0;
+  53   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:05:27 PAGE 2   
 
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 46 OF 8051_spi.c: unprintable character 0xA0 skipped
-  47   1        //now obtain the lower 8 bits
-  48   1      lower_bits = data1&0xFF;                   // ANDing separates the lower 8 bits
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 48 OF 8051_spi.c: unprintable character 0xA0 skipped
-  49   1        
-*** ERROR C100 IN LINE 49 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 49 OF 8051_spi.c: unprintable character 0xA0 skipped
-  50   1        CS_BAR=0;
-*** ERROR C100 IN LINE 50 OF 8051_spi.c: unprintable character 0xA0 skipped
-  51   1        SPDAT=upper_bits;                      // sending the upper 8 bits serially     
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 22:31:41 PAGE 3   
+  54   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  55   1          transmit_completed = 0;     // clear software transfert flag
+  56   1          SPDAT=lower_bits;           // sending the lower 8 bits serially   
+  57   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  58   1          transmit_completed = 0;     // clear software transfert flag 
+  59   1        CS_BAR=1;
+  60   1      }
+  61          
+  62          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  63          {
+  64   1        switch  ( SPSTA )         /* read and clear spi status register */
+  65   1        {
+  66   2          case 0x80:
+  67   2            serial_data=SPDAT;   /* read receive data */
+  68   2            transmit_completed=1;   /* set software flag */
+  69   2          break;
+  70   2      
+  71   2          case 0x10:
+  72   2               /* put here for mode fault tasking */  
+  73   2          break;
+  74   2        
+  75   2          case 0x40:
+  76   2               /* put here for overrun tasking */ 
+  77   2          break;
+  78   2        }
+  79   1      }
+  80          void Delay(int delay)
+  81          {
+  82   1        int d=0;
+  83   1        while(delay>0)
+  84   1        {
+  85   2          for(d=0;d<20;d++);
+  86   2          delay--;
+  87   2        }
+  88   1      }
 
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 51 OF 8051_spi.c: unprintable character 0xA0 skipped
-  52   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-*** ERROR C100 IN LINE 52 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C202 IN LINE 52 OF 8051_spi.c: 'transmit_completed': undefined identifier
-  53   1          transmit_completed = 0;     // clear software transfert flag 
-*** ERROR C202 IN LINE 53 OF 8051_spi.c: 'transmit_completed': undefined identifier
-  54   1        SPDAT=lower_bits;                      // sending the lower 8 bits serially   
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C100 IN LINE 54 OF 8051_spi.c: unprintable character 0xA0 skipped
-  55   1          while(!transmit_completed); // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-*** ERROR C100 IN LINE 55 OF 8051_spi.c: unprintable character 0xA0 skipped
-*** ERROR C202 IN LINE 55 OF 8051_spi.c: 'transmit_completed': undefined identifier
-  56   1          transmit_completed = 0;     // clear software transfert flag 
-*** ERROR C202 IN LINE 56 OF 8051_spi.c: 'transmit_completed': undefined identifier
-  57   1        CS_BAR=1;
-*** ERROR C100 IN LINE 57 OF 8051_spi.c: unprintable character 0xA0 skipped
-  58   1      }
-  59          
-  60          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-  61          {
-  62   1        switch  ( SPSTA )         /* read and clear spi status register */
-  63   1        {
-  64   2          case 0x80:  
-  65   2            serial_data=SPDAT;   /* read receive data */
-*** ERROR C202 IN LINE 65 OF 8051_spi.c: 'serial_data': undefined identifier
-  66   2            transmit_completed=1;/* set software flag */
-*** ERROR C202 IN LINE 66 OF 8051_spi.c: 'transmit_completed': undefined identifier
-  67   2          break;
-  68   2      
-  69   2          case 0x10:
-  70   2               /* put here for mode fault tasking */  
-  71   2          break;
-  72   2        
-  73   2          case 0x40:
-  74   2               /* put here for overrun tasking */ 
-  75   2          break;
-  76   2        }
-  77   1      }
-  78          void Delay(int delay)
-  79          {
-  80   1        int d=0;
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 22:31:41 PAGE 4   
 
-  81   1        while(delay>0)
-  82   1        {
-  83   2          for(d=0;d<20;d++);
-  84   2          delay--;
-  85   2        }
-  86   1      }
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    158    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  98 ERROR(S)
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

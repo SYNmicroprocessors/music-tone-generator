@@ -45,18 +45,18 @@ void dac(unsigned int data1)
 	unsigned char lower_bits; 
 
 	//first obtain the upper 8 bits
-upper_bits = (data1>>8)&00001111;                        // obtain the upper 4 bits 
+	upper_bits = (data1>>8)&00001111;					// obtain the upper 4 bits 
+	upper_bits = upper_bits || 00100000;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
 	//now obtain the lower 8 bits
-lower_bits = data1&0xFF;                   // ANDing separates the lower 8 bits
-
-  CS_BAR=0;
-	SPDAT=upper_bits;                      // sending the upper 8 bits serially     
- 		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
+	CS_BAR=0;
+	SPDAT=upper_bits;													// sending the upper 8 bits serially     
+		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+		transmit_completed = 0;    	// clear software transfert flag
+		SPDAT=lower_bits;						// sending the lower 8 bits serially   
+		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
-SPDAT=lower_bits;				    // sending the lower 8 bits serially   
- 		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag 
-  CS_BAR=1;
+	CS_BAR=1;
 }
 
 void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
