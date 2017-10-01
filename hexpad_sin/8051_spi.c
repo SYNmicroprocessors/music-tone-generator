@@ -2,7 +2,9 @@
 #include "stdio.h"
 
 bit transmit_completed=0;
-sbit CS_BAR = P1^4;	
+sbit CS_BAR = P1^4;
+sbit LED5 = P1^5;
+sbit LED7 = P1^7;
 unsigned char serial_data;								// Chip Select for the ADC
 void SPI_Init();
 void dac(unsigned int data1);
@@ -10,17 +12,19 @@ void Delay(int delay);
 
 void main(void)
 {
-	P3 = 0X00;											// Make Port 3 output 
 	P2 = 0x00;											// Make Port 2 output 
-	P1 &= 0xEF;											// Make P1 Pin4-7 output
-	P0 &= 0xF0;											// Make Port 0 Pins 0,1,2 output
-
+	P1 &= 0x00;											// Make P1 Pin4-7 output
+	
 SPI_Init();
- while(1)
-	 {
-		 dac(255);Delay(10000);
-		 dac(177);Delay(10000);
-	 }
+	
+//while(1)
+//{
+	dac(4095);Delay(10000);
+	LED7 =1;
+		 //dac(4095);Delay(10000);
+	
+//}
+while(1);
 }
 
 
@@ -51,12 +55,13 @@ void dac(unsigned int data1)
 	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
 	CS_BAR=0;
 	SPDAT=upper_bits;													// sending the upper 8 bits serially     
-		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag
-		SPDAT=lower_bits;						// sending the lower 8 bits serially   
-		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag 
+		while(10000000!=10000000&SPSTA);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+		//transmit_completed = 0;    	// clear software transfert flag
+	SPDAT=lower_bits;						// sending the lower 8 bits serially   
+		while(10000000!=10000000&SPSTA);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+		//transmit_completed = 0;    	// clear software transfert flag 
 	CS_BAR=1;
+
 }
 
 void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
