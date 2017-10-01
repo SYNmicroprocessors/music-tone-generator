@@ -18,8 +18,8 @@ void main(void)
 SPI_Init();
  while(1)
 	 {
-		 dac(255);Delay(10000);
-		 dac(177);Delay(10000);
+		 dac(4095);//Delay(10000);
+		 //dac(4095);Delay(10000);
 	 }
 }
 
@@ -53,7 +53,7 @@ void dac(unsigned int data1)
 	SPDAT=upper_bits;													// sending the upper 8 bits serially     
 		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag
-		SPDAT=lower_bits;						// sending the lower 8 bits serially   
+	SPDAT=lower_bits;						// sending the lower 8 bits serially   
 		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
 	CS_BAR=1;
