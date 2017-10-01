@@ -2,6 +2,9 @@
 #include "stdio.h"
 
 sbit CS_BAR = P1^4;									// Chip Select for the ADC
+void SPI_Init();
+void dac(unsigned int data1);
+void Delay(int delay);
 
 void main(void)
 {
@@ -11,12 +14,11 @@ void main(void)
 	P0 &= 0xF0;											// Make Port 0 Pins 0,1,2 output
 	
 SPI_Init();
- while(1)
-   {
-      dac(255);  delay(1000);
-      dac(127);  delay(1000);
-      dac(63);   delay(1000);
-   }
+ while(1)
+	 {
+		 dac(255);Delay(10000);
+		 dac(177);Delay(10000);
+	 }
 }
 
 
@@ -35,26 +37,21 @@ void SPI_Init()
 }
 
 
-void dac(unsigned int data)
+void dac(unsigned int data1)
 {
-  unsigned int c ;
-  unsigned int lower_bits;
-  unsigned int upper_bits;  
-  c = ((data+1)*16) -1;                       // here we obtain 12 bit data
+	unsigned char upper_bits;
+	unsigned char lower_bits; 
 
-  //first obtain the upper 8 bits
-  upper_bits = c/256;                          // obtain the upper 4 bits 
-  upper_bits = (48) | upper_bits;         // append 0011 to the above 4 bits
-
-
-  //now obtain the lower 8 bits
-  lower_bits = 255 & c;                      // ANDing separates the lower 8 bits
+	//first obtain the upper 8 bits
+upper_bits = (data1>>8)&00001111;                        // obtain the upper 4 bits 
+	//now obtain the lower 8 bits
+lower_bits = data1&0xFF;                   // ANDing separates the lower 8 bits
   
   CS_BAR=0;
-  SPDAT=upper_bits;                      // sending the upper 8 bits serially     
+	SPDAT=upper_bits;                      // sending the upper 8 bits serially     
  		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
-  SPDAT=lower_bits;                      // sending the lower 8 bits serially   
+SPDAT=lower_bits;                      // sending the lower 8 bits serially   
  		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
   CS_BAR=1;
@@ -76,5 +73,14 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 		case 0x40:
          /* put here for overrun tasking */	
 		break;
+	}
+}
+void Delay(int delay)
+{
+	int d=0;
+	while(delay>0)
+	{
+		for(d=0;d<20;d++);
+		delay--;
 	}
 }
