@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:07:24 PAGE 1   
-=======
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 1   
->>>>>>> eafb941a4874e89f00fcb6c5420708599b17146d
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 03:08:55 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE 8051_SPI
@@ -18,108 +14,105 @@ line level    source
    4          bit transmit_completed=0;
    5          sbit CS_BAR = P1^4;
    6          sbit LED5 = P1^5;
-   7          sbit LED7 = P1^7;
-   8          unsigned char serial_data;                // Chip Select for the ADC
-   9          void SPI_Init();
-  10          void dac(unsigned int data1);
-  11          void Delay(int delay);
-  12          
-  13          void main(void)
-  14          {
-  15   1        P2 = 0x00;                      // Make Port 2 output 
-  16   1        P1 &= 0x00;                     // Make P1 Pin4-7 output
-  17   1        
-  18   1      SPI_Init();
+   7          sbit LED6 = P1^6;
+   8          sbit LED4 = P1^7;
+   9          unsigned char serial_data;                // Chip Select for the ADC
+  10          void SPI_Init();
+  11          void dac(unsigned int data1);
+  12          void Delay(int delay);
+  13          
+  14          void main(void)
+  15          {
+  16   1        //unsigned int value = 2045;
+  17   1        P2 = 0x00;                      // Make Port 2 output 
+  18   1        P1 &= 0x00;                     // Make P1 Pin4-7 output
   19   1        
-  20   1      //while(1)
-  21   1      //{
-  22   1        dac(4095);Delay(10000);
-  23   1        LED7 =1;
-  24   1           //dac(4095);Delay(10000);
-  25   1        
-  26   1      //}
-  27   1      while(1);
-  28   1      }
-  29          
-  30          
+  20   1      SPI_Init();
+  21   1      while(1)
+  22   1      {
+  23   2        dac(4000);
+  24   2        LED5 =!LED5;
+  25   2        LED4 =!LED4;
+  26   2        Delay(10000);
+  27   2           //dac(4095);Delay(10000);
+  28   2        
+  29   2      }
+  30   1      }
   31          
-  32          void SPI_Init()
-  33          {
-  34   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
-  35   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
-  36   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
-  37   1        SPCON |= 0x10;                  // Master mode 
-  38   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
-  39   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
-  40   1        IEN1 |= 0x04;                   // enable spi interrupt 
-  41   1        EA=1;                           // enable interrupts 
-  42   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
-  43   1      }
-  44          
-  45          
-  46          void dac(unsigned int data1)
-  47          {
-  48   1        unsigned char upper_bits;
-  49   1        unsigned char lower_bits; 
-  50   1      
-  51   1        //first obtain the upper 8 bits
-  52   1        upper_bits = (data1>>8)&00001111;         // obtain the upper 4 bits 
-  53   1        upper_bits = upper_bits || 00100000;          //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl
-             -/
-<<<<<<< HEAD
-  50   1        //now obtain the lower 8 bits
-  51   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
-  52   1        CS_BAR=0;
-  53   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:07:24 PAGE 2   
-=======
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 2   
->>>>>>> eafb941a4874e89f00fcb6c5420708599b17146d
+  32          
+  33          
+  34          void SPI_Init()
+  35          {
+  36   1        CS_BAR = 1;                      
+  37   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  38   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  39   1        SPCON |= 0x10;                  // Master mode 
+  40   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  41   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  42   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  43   1        EA=1;                           // enable interrupts 
+  44   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+  45   1      
+  46   1      }
+  47          
+  48          
+  49          void dac(unsigned int data1)
+  50          {
+  51   1        unsigned char upper_bits;
+  52   1        unsigned char lower_bits; 
+  53   1      
+  54   1        //first obtain the upper 8 bits
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 03:08:55 PAGE 2   
 
-  54   1        //now obtain the lower 8 bits
-  55   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
-  56   1        CS_BAR=0;
-  57   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
-  58   1          while(10000000!=10000000&SPSTA);  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-  59   1          //transmit_completed = 0;     // clear software transfert flag
-  60   1        SPDAT=lower_bits;           // sending the lower 8 bits serially   
-  61   1          while(10000000!=10000000&SPSTA);  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-  62   1          //transmit_completed = 0;     // clear software transfert flag 
-  63   1        CS_BAR=1;
-  64   1      
-  65   1      }
-  66          
-  67          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-  68          {
-  69   1        switch  ( SPSTA )         /* read and clear spi status register */
-  70   1        {
-  71   2          case 0x80:
-  72   2            serial_data=SPDAT;   /* read receive data */
-  73   2            transmit_completed=1;   /* set software flag */
-  74   2          break;
-  75   2      
-  76   2          case 0x10:
-  77   2               /* put here for mode fault tasking */  
+  55   1        upper_bits = (data1/256);         // obtain the upper 4 bits 
+  56   1        upper_bits = upper_bits | 48;         //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
+  57   1        //now obtain the lower 8 bits
+  58   1        lower_bits = data1&0x00FF;                  // ANDing separates the lower 8 bits
+  59   1        
+  60   1        CS_BAR=0;
+  61   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
+  62   1          while(!transmit_completed );  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  63   1          transmit_completed = 0;     // clear software transfert flag
+  64   1        SPDAT=lower_bits;           // sending the lower 8 bits serially   
+  65   1          while(!transmit_completed );  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  66   1        LED4=1;
+  67   1          transmit_completed = 0;     // clear software transfert flag 
+  68   1        CS_BAR=1;
+  69   1      
+  70   1      }
+  71          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  72          {
+  73   1        switch  ( SPSTA )         /* read and clear spi status register */
+  74   1        {
+  75   2          case 0x80:  
+  76   2            serial_data=SPDAT;   /* read receive data */
+  77   2            transmit_completed=1;/* set software flag */
   78   2          break;
-  79   2        
-  80   2          case 0x40:
-  81   2               /* put here for overrun tasking */ 
+  79   2      
+  80   2          case 0x10:
+  81   2               /* put here for mode fault tasking */  
   82   2          break;
-  83   2        }
-  84   1      }
-  85          void Delay(int delay)
-  86          {
-  87   1        int d=0;
-  88   1        while(delay>0)
-  89   1        {
-  90   2          for(d=0;d<20;d++);
-  91   2          delay--;
-  92   2        }
-  93   1      }
+  83   2        
+  84   2          case 0x40:
+  85   2               /* put here for overrun tasking */ 
+  86   2          break;
+  87   2        }
+  88   1      }
+  89          
+  90          
+  91          void Delay(int delay)
+  92          {
+  93   1        int d=0;
+  94   1        while(delay>0)
+  95   1        {
+  96   2          for(d=0;d<20;d++);
+  97   2          delay--;
+  98   2        }
+  99   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    130    ----
+   CODE SIZE        =    147    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
