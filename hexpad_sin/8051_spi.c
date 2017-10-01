@@ -1,7 +1,9 @@
 #include "at89c5131.h"
 #include "stdio.h"
 
-sbit CS_BAR = P1^4;									// Chip Select for the ADC
+bit transmit_completed=0;
+sbit CS_BAR = P1^4;	
+unsigned char serial_data;								// Chip Select for the ADC
 void SPI_Init();
 void dac(unsigned int data1);
 void Delay(int delay);
@@ -12,7 +14,7 @@ void main(void)
 	P2 = 0x00;											// Make Port 2 output 
 	P1 &= 0xEF;											// Make P1 Pin4-7 output
 	P0 &= 0xF0;											// Make Port 0 Pins 0,1,2 output
-	
+
 SPI_Init();
  while(1)
 	 {
@@ -46,12 +48,12 @@ void dac(unsigned int data1)
 upper_bits = (data1>>8)&00001111;                        // obtain the upper 4 bits 
 	//now obtain the lower 8 bits
 lower_bits = data1&0xFF;                   // ANDing separates the lower 8 bits
-  
+
   CS_BAR=0;
 	SPDAT=upper_bits;                      // sending the upper 8 bits serially     
  		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
-SPDAT=lower_bits;                      // sending the lower 8 bits serially   
+SPDAT=lower_bits;				    // sending the lower 8 bits serially   
  		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
 		transmit_completed = 0;    	// clear software transfert flag 
   CS_BAR=1;
@@ -61,9 +63,9 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 {
 	switch	( SPSTA )         /* read and clear spi status register */
 	{
-		case 0x80:	
+		case 0x80:
 			serial_data=SPDAT;   /* read receive data */
-      transmit_completed=1;/* set software flag */
+      transmit_completed=1;		/* set software flag */
  		break;
 
 		case 0x10:
