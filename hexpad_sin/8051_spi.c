@@ -50,7 +50,7 @@ void dac(unsigned int data1)
 
 	//first obtain the upper 8 bits
 	upper_bits = (data1>>8)&00001111;					// obtain the upper 4 bits 
-	upper_bits = upper_bits || 00100000;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
+	upper_bits = upper_bits || 01110000;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
 	//now obtain the lower 8 bits
 	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
 	CS_BAR=0;
@@ -69,7 +69,7 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 	switch	( SPSTA )         /* read and clear spi status register */
 	{
 		case 0x80:
-			serial_data=SPDAT;   /* read receive data */
+			//serial_data=SPDAT;   /* read receive data */
       transmit_completed=1;		/* set software flag */
  		break;
 

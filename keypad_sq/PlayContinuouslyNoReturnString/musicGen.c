@@ -16,7 +16,7 @@ void main()
 P1 = 0x00;	//JUST TO SAVE POWER :P
 P0 = 0x00;	// making P0^1 AS OUTPUT is enough though
 init_serial();
-transmit_string("Welcome to Music Tone Generator!",41);
+transmit_string("Welcome to Music Tone Generator!",32);
 
 
 while(1)

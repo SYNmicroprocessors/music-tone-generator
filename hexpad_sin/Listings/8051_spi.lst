@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:33:36 PAGE 1   
-=======
-<<<<<<< HEAD
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:07:24 PAGE 1   
-=======
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 1   
->>>>>>> eafb941a4874e89f00fcb6c5420708599b17146d
->>>>>>> bc838891703a3a315be09d87f3cca539b1636300
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/03/2017 19:35:46 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE 8051_SPI
@@ -68,21 +60,9 @@ line level    source
   50   1      
   51   1        //first obtain the upper 8 bits
   52   1        upper_bits = (data1>>8)&00001111;         // obtain the upper 4 bits 
-  53   1        upper_bits = upper_bits || 00100000;          //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl
+  53   1        upper_bits = upper_bits || 01110000;          //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl
              -/
-<<<<<<< HEAD
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:33:36 PAGE 2   
-=======
-<<<<<<< HEAD
-  50   1        //now obtain the lower 8 bits
-  51   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
-  52   1        CS_BAR=0;
-  53   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/01/2017 23:07:24 PAGE 2   
-=======
-C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 00:22:51 PAGE 2   
->>>>>>> eafb941a4874e89f00fcb6c5420708599b17146d
->>>>>>> bc838891703a3a315be09d87f3cca539b1636300
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/03/2017 19:35:46 PAGE 2   
 
   54   1        //now obtain the lower 8 bits
   55   1        lower_bits = data1&0xFF;                  // ANDing separates the lower 8 bits
@@ -102,7 +82,7 @@ line level    source
   69   1        switch  ( SPSTA )         /* read and clear spi status register */
   70   1        {
   71   2          case 0x80:
-  72   2            serial_data=SPDAT;   /* read receive data */
+  72   2            //serial_data=SPDAT;   /* read receive data */
   73   2            transmit_completed=1;   /* set software flag */
   74   2          break;
   75   2      
@@ -130,7 +110,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    191    ----
+   CODE SIZE        =    188    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
