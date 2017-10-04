@@ -45,7 +45,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>keypad_sin</OutputName>
+          <OutputName>musicGen.</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -364,9 +364,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>keypad_sin.c</FileName>
+              <FileName>musicGen.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\keypad_sin.c</FilePath>
+              <FilePath>.\musicGen.c</FilePath>
             </File>
           </Files>
         </Group>

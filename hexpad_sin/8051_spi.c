@@ -17,14 +17,14 @@ void main(void)
 	
 SPI_Init();
 	
-//while(1)
-//{
+while(1)
+{
 	dac(4095);Delay(10000);
 	LED7 =1;
 		 //dac(4095);Delay(10000);
 	
-//}
-while(1);
+}
+//while(1);
 }
 
 
@@ -50,7 +50,7 @@ void dac(unsigned int data1)
 
 	//first obtain the upper 8 bits
 	upper_bits = (data1>>8)&00001111;					// obtain the upper 4 bits 
-	upper_bits = upper_bits || 01110000;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
+	upper_bits = upper_bits || 01100000;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
 	//now obtain the lower 8 bits
 	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
 	CS_BAR=0;

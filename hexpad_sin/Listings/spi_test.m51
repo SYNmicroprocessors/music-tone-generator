@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        10/03/2017  19:35:46  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/03/2017  20:28:52  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -59,7 +59,7 @@ SEGMENT
   +--> ?C_INITSEG
 
 ?PR?MAIN?8051_SPI
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  19:35:46  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  20:28:52  PAGE 2
 
 
   +--> ?PR?SPI_INIT?8051_SPI
@@ -108,20 +108,22 @@ SYMBOL TABLE OF MODULE:  .\Objects\spi_test (8051_SPI)
   C:0914H         LINE#         15
   C:0917H         LINE#         16
   C:0919H         LINE#         18
+  C:091CH         LINE#         20
+  C:091CH         LINE#         21
   C:091CH         LINE#         22
   C:092AH         LINE#         23
-  C:092CH         LINE#         27
+  C:092CH         LINE#         26
   -------         ENDPROC       MAIN
   -------         PROC          SPI_INIT
   C:092EH         LINE#         32
   C:092EH         LINE#         33
   C:092EH         LINE#         34
   C:0930H         LINE#         35
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  20:28:52  PAGE 3
+
+
   C:0933H         LINE#         36
   C:0936H         LINE#         37
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  19:35:46  PAGE 3
-
-
   C:0939H         LINE#         38
   C:093CH         LINE#         39
   C:093FH         LINE#         40
@@ -177,11 +179,11 @@ SYMBOL TABLE OF MODULE:  .\Objects\spi_test (8051_SPI)
   C:08D8H         LINE#         90
   C:08D8H         LINE#         91
   C:08E3H         LINE#         92
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  20:28:52  PAGE 4
+
+
   C:08E3H         LINE#         93
   C:08F1H         LINE#         94
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/03/2017  19:35:46  PAGE 4
-
-
   C:08F6H         LINE#         95
   C:08F8H         LINE#         96
   -------         ENDPROC       _DELAY

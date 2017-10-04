@@ -2,47 +2,39 @@
 #include "stdio.h"
 #include "math.h"
 
+sbit op = P0^0;
+int input=0,x = 0;
+
 void delay_5us(int delay);
 void transmit_data(unsigned char str);
 void transmit_string(char* str,unsigned int  n);
 void init_serial();
-void outputTone(unsigned int inputInt);
+void outputTone(void);
 
 void main()
 {
 P1 = 0x00;	//JUST TO SAVE POWER :P
 P0 = 0x00;	// making P0^1 AS OUTPUT is enough though
 init_serial();
-transmit_string("Tone Generator",15);
+transmit_string("Tone Generator",14);
 
 while(1)
 {
 	////////////////////////////////////////first
-	
-	while(input=='z') 
+	if(input=='z') 
 	{
 		//transmit_string("z ",2);
-		outputTone(1818);
+		outputTone();		//1818
 		//input =0;
-		//transmit_string("done ",4);
+		transmit_string("done ",4);
 	}
 }
-
-
 
 }
 //-----------------------------------------outputTone-----------------------------
-void outputTone(unsigned int inputInt)
+void outputTone(void)
 {
-	x=10000/inputInt;
-	while(x>0)
-	{
-		op = 1;
-		delay_5us(inputInt);
-		op = 0;
-		delay_5us(inputInt);
-		x--;
-	}
+	
 }
 //-----------------------------------------receive_data---------------------------
 void receive_data(void) interrupt 4
