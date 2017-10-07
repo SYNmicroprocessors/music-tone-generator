@@ -1,3 +1,0 @@
-".\Objects\musicGen-v3-playOnce.obj" 
-TO ".\Objects\musicGen-v3-playOnce" 
-PRINT(".\Listings\musicGen-v3-playOnce.m51") RAMSIZE(256) 

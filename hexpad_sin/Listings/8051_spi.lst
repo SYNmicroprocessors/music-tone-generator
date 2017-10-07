@@ -1,0 +1,125 @@
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 03:08:55 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE 8051_SPI
+OBJECT MODULE PLACED IN .\Objects\8051_spi.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE 8051_spi.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -8051_spi.lst) TABS(2) OBJECT(.\Objects\8051_spi.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          
+   4          bit transmit_completed=0;
+   5          sbit CS_BAR = P1^4;
+   6          sbit LED5 = P1^5;
+   7          sbit LED6 = P1^6;
+   8          sbit LED4 = P1^7;
+   9          unsigned char serial_data;                // Chip Select for the ADC
+  10          void SPI_Init();
+  11          void dac(unsigned int data1);
+  12          void Delay(int delay);
+  13          
+  14          void main(void)
+  15          {
+  16   1        //unsigned int value = 2045;
+  17   1        P2 = 0x00;                      // Make Port 2 output 
+  18   1        P1 &= 0x00;                     // Make P1 Pin4-7 output
+  19   1        
+  20   1      SPI_Init();
+  21   1      while(1)
+  22   1      {
+  23   2        dac(4000);
+  24   2        LED5 =!LED5;
+  25   2        LED4 =!LED4;
+  26   2        Delay(10000);
+  27   2           //dac(4095);Delay(10000);
+  28   2        
+  29   2      }
+  30   1      }
+  31          
+  32          
+  33          
+  34          void SPI_Init()
+  35          {
+  36   1        CS_BAR = 1;                      
+  37   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  38   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  39   1        SPCON |= 0x10;                  // Master mode 
+  40   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  41   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  42   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  43   1        EA=1;                           // enable interrupts 
+  44   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+  45   1      
+  46   1      }
+  47          
+  48          
+  49          void dac(unsigned int data1)
+  50          {
+  51   1        unsigned char upper_bits;
+  52   1        unsigned char lower_bits; 
+  53   1      
+  54   1        //first obtain the upper 8 bits
+C51 COMPILER V9.56.0.0   8051_SPI                                                          10/02/2017 03:08:55 PAGE 2   
+
+  55   1        upper_bits = (data1/256);         // obtain the upper 4 bits 
+  56   1        upper_bits = upper_bits | 48;         //first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
+  57   1        //now obtain the lower 8 bits
+  58   1        lower_bits = data1&0x00FF;                  // ANDing separates the lower 8 bits
+  59   1        
+  60   1        CS_BAR=0;
+  61   1        SPDAT=upper_bits;                         // sending the upper 8 bits serially     
+  62   1          while(!transmit_completed );  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  63   1          transmit_completed = 0;     // clear software transfert flag
+  64   1        SPDAT=lower_bits;           // sending the lower 8 bits serially   
+  65   1          while(!transmit_completed );  // wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
+  66   1        LED4=1;
+  67   1          transmit_completed = 0;     // clear software transfert flag 
+  68   1        CS_BAR=1;
+  69   1      
+  70   1      }
+  71          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  72          {
+  73   1        switch  ( SPSTA )         /* read and clear spi status register */
+  74   1        {
+  75   2          case 0x80:  
+  76   2            serial_data=SPDAT;   /* read receive data */
+  77   2            transmit_completed=1;/* set software flag */
+  78   2          break;
+  79   2      
+  80   2          case 0x10:
+  81   2               /* put here for mode fault tasking */  
+  82   2          break;
+  83   2        
+  84   2          case 0x40:
+  85   2               /* put here for overrun tasking */ 
+  86   2          break;
+  87   2        }
+  88   1      }
+  89          
+  90          
+  91          void Delay(int delay)
+  92          {
+  93   1        int d=0;
+  94   1        while(delay>0)
+  95   1        {
+  96   2          for(d=0;d<20;d++);
+  97   2          delay--;
+  98   2        }
+  99   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    147    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,3 +1,0 @@
-".\Objects\keypad_sin.obj" 
-TO ".\Objects\keypad_sin" 
-PRINT(".\Listings\keypad_sin.m51") RAMSIZE(256) 
