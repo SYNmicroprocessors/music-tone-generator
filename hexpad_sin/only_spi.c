@@ -3,23 +3,13 @@
 #include "math.h"
 
 int k=0;
-unsigned int freq; off; amp; duty; dacval;
+unsigned int freq; off; amp; duty; dacval;i=0;
 unsigned char serial;
 //code int sin[500];
 
 sbit CS_BAR = P1^4;									
 sbit LDAC_BAR = P1^3;
 bit transmit_completed= 0;					
-
-void delay(int delay)             
-{
-	int d=0;
-	while(delay>0)
-	{
-		for(d=0;d<3;d++);
-		delay--;
-	}
-}
 
 void SPI_Init()
 {
@@ -78,6 +68,7 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 void dac(unsigned int dacval)
 {
 	unsigned char sendval = 0;
+		//LDAC_BAR = 0;
 	sendval = (dacval >> 8) | 0x70;
 	CS_BAR = 0;                 // enable ADC as slave		   
 	SPDAT = sendval;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
@@ -88,17 +79,37 @@ void dac(unsigned int dacval)
 	while(!transmit_completed);	// wait end of transmition	
 	transmit_completed = 0;    	// clear software transfer flag 
 	CS_BAR = 1;
+	//LDAC_BAR=1;
+}
+void delay(int delay)             
+{
+	int d=0;
+	while(delay>0)
+	{
+		for(d=0;d<3;d++);
+		delay--;
+	}
 }
 
 /////////////////////// MAIN PROGRAM///////////////////////////////
 
 void main()
 {
-	P2 = 0x00;											// Make Port 2 output 
+		P2 = 0x00;											// Make Port 2 output 
+	//P1 &= 0xEF;											// Make P1 Pin4-7 output
+	P0 &= 0xF0;											// Make Port 0 Pins 0,1,2 output
 	P1 |= 0xF0;
 	
 	SPI_Init();
-	dacval  =  4095;
-	dac(dacval);
-	while(1);
+	dacval  =  95;
+	
+	i=5;
+
+		while(1)
+			dac(dacval);
+		
+		
+	
+
+
 }

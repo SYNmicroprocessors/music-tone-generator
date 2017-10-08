@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 1   
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 15:38:24 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE FUNCTION_GENERATOR
@@ -62,7 +62,7 @@ line level    source
   52   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
   53   1        IEN1 |= 0x04;                   // enable spi interrupt 
   54   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
-C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 2   
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 15:38:24 PAGE 2   
 
   55   1      }
   56          
@@ -126,7 +126,7 @@ line level    source
  114          {
  115   1        while(!flag_r);
  116   1        *c = SBUF;
-C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 3   
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 15:38:24 PAGE 3   
 
  117   1        flag_r = 0;
  118   1        return;
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          /////////////////////// MAIN PROGRAM///////////////////////////////
-C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 4   
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 15:38:24 PAGE 4   
 
  179          
  180          void main()
@@ -254,7 +254,7 @@ line level    source
  238   2          else
  239   2            dacval = 0;
  240   2          k++;
-C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 5   
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 15:38:24 PAGE 5   
 
  241   2          
  242   2          send_dac(dacval);

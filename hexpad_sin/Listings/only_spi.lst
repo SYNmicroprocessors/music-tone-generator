@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   ONLY_SPI                                                          10/08/2017 15:15:50 PAGE 1   
+C51 COMPILER V9.56.0.0   ONLY_SPI                                                          10/08/2017 17:03:27 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE ONLY_SPI
@@ -13,7 +13,7 @@ line level    source
    3          #include "math.h"
    4          
    5          int k=0;
-   6          unsigned int freq; off; amp; duty; dacval;
+   6          unsigned int freq; off; amp; duty; dacval;i=0;
    7          unsigned char serial;
    8          //code int sin[500];
    9          
@@ -21,107 +21,120 @@ line level    source
   11          sbit LDAC_BAR = P1^3;
   12          bit transmit_completed= 0;          
   13          
-  14          void delay(int delay)             
+  14          void SPI_Init()
   15          {
-  16   1        int d=0;
-  17   1        while(delay>0)
-  18   1        {
-  19   2          for(d=0;d<3;d++);
-  20   2          delay--;
-  21   2        }
-  22   1      }
-  23          
-  24          void SPI_Init()
-  25          {
-  26   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
-  27   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
-  28   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
-  29   1        SPCON |= 0x10;                  // Master mode 
-  30   1        //SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
-  31   1        SPCON |= 0x08;
-  32   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
-  33   1        IEN1 |= 0x04;                   // enable spi interrupt 
-  34   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
-  35   1        EA = 1;
-  36   1      }
-  37          
-  38          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-  39          {
-  40   1        switch  ( SPSTA )         /* read and clear spi status register */
-  41   1        {
-  42   2          case 0x80:
-  43   2            serial=SPDAT; 
-  44   2            transmit_completed=1;/* set software flag */
-  45   2          break;
-  46   2      
-  47   2          case 0x10:
-  48   2               /* put here for mode fault tasking */  
-  49   2          break;
-  50   2        
-  51   2          case 0x40:
-  52   2               /* put here for overrun tasking */ 
-  53   2          break;
-  54   2        }
-C51 COMPILER V9.56.0.0   ONLY_SPI                                                          10/08/2017 15:15:50 PAGE 2   
+  16   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
+  17   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  18   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  19   1        SPCON |= 0x10;                  // Master mode 
+  20   1        //SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  21   1        SPCON |= 0x08;
+  22   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  23   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  24   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+  25   1        EA = 1;
+  26   1      }
+  27          
+  28          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  29          {
+  30   1        switch  ( SPSTA )         /* read and clear spi status register */
+  31   1        {
+  32   2          case 0x80:
+  33   2            serial=SPDAT; 
+  34   2            transmit_completed=1;/* set software flag */
+  35   2          break;
+  36   2      
+  37   2          case 0x10:
+  38   2               /* put here for mode fault tasking */  
+  39   2          break;
+  40   2        
+  41   2          case 0x40:
+  42   2               /* put here for overrun tasking */ 
+  43   2          break;
+  44   2        }
+  45   1      }
+  46          
+  47          
+  48          //void send_voltage(int dac)
+  49          //{
+  50          //  dac1 = dac/256;
+  51          //  dac1 = dac1 | 0x70;
+  52          //  dac2 = dac%256;
+  53          
+  54          //  LDAC_BAR = 0;
+C51 COMPILER V9.56.0.0   ONLY_SPI                                                          10/08/2017 17:03:27 PAGE 2   
 
-  55   1      }
-  56          
-  57          
-  58          //void send_voltage(int dac)
-  59          //{
-  60          //  dac1 = dac/256;
-  61          //  dac1 = dac1 | 0x70;
-  62          //  dac2 = dac%256;
-  63          
-  64          //  LDAC_BAR = 0;
-  65          //  CS_BAR = 0;                 // enable ADC as slave       
-  66          //  SPDAT = dac1;       // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-  67          //  while(!transmit_completed); // wait end of transmition  
-  68          //  transmit_completed = 0;     // clear software transfer flag 
-  69          //    
-  70          //  SPDAT = dac2;               // 
-  71          //  while(!transmit_completed); // wait end of transmition 
-  72          //  transmit_completed = 0;     // clear software transfer flag 
-  73          //  CS_BAR = 1;                 // disable ADC as slave
-  74          //    
-  75          //  delay(2000/freq);
-  76          //}
-  77          
-  78          void dac(unsigned int dacval)
-  79          {
-  80   1        unsigned char sendval = 0;
-  81   1        sendval = (dacval >> 8) | 0x70;
-  82   1        CS_BAR = 0;                 // enable ADC as slave       
-  83   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-  84   1        while(!transmit_completed); // wait end of transmition  
-  85   1        transmit_completed = 0;     // clear software transfer flag 
-  86   1        sendval = dacval;
-  87   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-  88   1        while(!transmit_completed); // wait end of transmition  
-  89   1        transmit_completed = 0;     // clear software transfer flag 
-  90   1        CS_BAR = 1;
-  91   1      }
-  92          
-  93          /////////////////////// MAIN PROGRAM///////////////////////////////
-  94          
-  95          void main()
-  96          {
-  97   1        P2 = 0x00;                      // Make Port 2 output 
-  98   1        P1 |= 0xF0;
-  99   1        
- 100   1        SPI_Init();
- 101   1        dacval  =  4095;
- 102   1        dac(dacval);
- 103   1        while(1);
- 104   1      }
+  55          //  CS_BAR = 0;                 // enable ADC as slave       
+  56          //  SPDAT = dac1;       // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  57          //  while(!transmit_completed); // wait end of transmition  
+  58          //  transmit_completed = 0;     // clear software transfer flag 
+  59          //    
+  60          //  SPDAT = dac2;               // 
+  61          //  while(!transmit_completed); // wait end of transmition 
+  62          //  transmit_completed = 0;     // clear software transfer flag 
+  63          //  CS_BAR = 1;                 // disable ADC as slave
+  64          //    
+  65          //  delay(2000/freq);
+  66          //}
+  67          
+  68          void dac(unsigned int dacval)
+  69          {
+  70   1        unsigned char sendval = 0;
+  71   1          //LDAC_BAR = 0;
+  72   1        sendval = (dacval >> 8) | 0x70;
+  73   1        CS_BAR = 0;                 // enable ADC as slave       
+  74   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  75   1        while(!transmit_completed); // wait end of transmition  
+  76   1        transmit_completed = 0;     // clear software transfer flag 
+  77   1        sendval = dacval;
+  78   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  79   1        while(!transmit_completed); // wait end of transmition  
+  80   1        transmit_completed = 0;     // clear software transfer flag 
+  81   1        CS_BAR = 1;
+  82   1        //LDAC_BAR=1;
+  83   1      }
+  84          void delay(int delay)             
+  85          {
+  86   1        int d=0;
+  87   1        while(delay>0)
+  88   1        {
+  89   2          for(d=0;d<3;d++);
+  90   2          delay--;
+  91   2        }
+  92   1      }
+  93          
+  94          /////////////////////// MAIN PROGRAM///////////////////////////////
+  95          
+  96          void main()
+  97          {
+  98   1          P2 = 0x00;                      // Make Port 2 output 
+  99   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
+ 100   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+ 101   1        P1 |= 0xF0;
+ 102   1        
+ 103   1        SPI_Init();
+ 104   1        dacval  =  95;
+ 105   1        
+ 106   1        i=5;
+ 107   1      
+ 108   1          while(1)
+ 109   1            dac(dacval);
+ 110   1          
+ 111   1          
+ 112   1        
+ 113   1      
+ 114   1      
+ 115   1      }
+
+C51 COMPILER V9.56.0.0   ONLY_SPI                                                          10/08/2017 17:03:27 PAGE 3   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    140    ----
+   CODE SIZE        =    147    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     13    ----
+   DATA SIZE        =     15    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
