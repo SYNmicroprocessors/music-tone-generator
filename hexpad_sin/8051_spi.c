@@ -43,25 +43,19 @@ void SPI_Init()
 }
 
 
-void dac(unsigned int data1)
+void dac(unsigned int dacval)
 {
-	unsigned char upper_bits;
-	unsigned char lower_bits; 
-
-	//first obtain the upper 8 bits
-	upper_bits = (data1>>8)&0x0F;					// obtain the upper 4 bits 
-	upper_bits = upper_bits || 0x30;					//first 4 bits are config,DacA/b,(un)buffered,2x/1x,bufferDisabl/
-	//now obtain the lower 8 bits
-	lower_bits = data1&0xFF;									// ANDing separates the lower 8 bits
-	CS_BAR=0;
-	SPDAT=upper_bits;													// sending the upper 8 bits serially     
-		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag
-	SPDAT=lower_bits;						// sending the lower 8 bits serially   
-		while(!transmit_completed);	// wait end of transmition;TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag 
-	CS_BAR=1;
-
+	unsigned char sendval = 0;
+	sendval = (dacval >> 8 | 0x70);
+	CS_BAR = 0;                 // enable ADC as slave		   
+	SPDAT = sendval;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+	while(!transmit_completed);	// wait end of transmition	
+	transmit_completed = 0;    	// clear software transfer flag 
+	sendval = dacval;
+	SPDAT = sendval;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+	while(!transmit_completed);	// wait end of transmition	
+	transmit_completed = 0;    	// clear software transfer flag 
+	CS_BAR = 1;
 }
 
 void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/

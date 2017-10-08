@@ -1,0 +1,193 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/08/2017  15:15:50  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\only_spi.obj TO .\Objects\only_spi PRINT (.\Listings\only_spi.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\only_spi.obj (ONLY_SPI)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\only_spi (ONLY_SPI)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000DH     UNIT         ?DT?ONLY_SPI
+                    0015H     000BH                  *** GAP ***
+            BIT     0020H.0   0000H.1   UNIT         ?BI?ONLY_SPI
+                    0020H.1   0000H.7                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0048H                  *** GAP ***
+            CODE    004BH     0003H     ABSOLUTE     
+                    004EH     07B2H                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0021H     UNIT         ?PR?_DELAY?ONLY_SPI
+            CODE    08ADH     001DH     UNIT         ?PR?_DAC?ONLY_SPI
+            CODE    08CAH     001CH     UNIT         ?PR?IT_SPI?ONLY_SPI
+            CODE    08E6H     001AH     UNIT         ?PR?SPI_INIT?ONLY_SPI
+            CODE    0900H     0018H     UNIT         ?PR?MAIN?ONLY_SPI
+            CODE    0918H     0007H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\only_spi (ONLY_SPI)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?ONLY_SPI
+  +--> ?C_INITSEG
+
+?PR?MAIN?ONLY_SPI
+  +--> ?PR?SPI_INIT?ONLY_SPI
+  +--> ?PR?_DAC?ONLY_SPI
+
+
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  15:15:50  PAGE 2
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ONLY_SPI
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:0008H         PUBLIC        serial
+  D:00C0H         PUBLIC        P4
+  D:00C3H         PUBLIC        SPCON
+  B:00A8H.7       PUBLIC        EA
+  D:00C4H         PUBLIC        SPSTA
+  D:00A8H         PUBLIC        IEN0
+  D:00B1H         PUBLIC        IEN1
+  C:088CH         PUBLIC        _delay
+  D:00B8H         PUBLIC        IPL0
+  B:0020H.0       PUBLIC        transmit_completed
+  D:00D8H         PUBLIC        CCON
+  C:0900H         PUBLIC        main
+  C:08ADH         PUBLIC        _dac
+  C:08CAH         PUBLIC        it_SPI
+  D:0009H         PUBLIC        freq
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:000BH         PUBLIC        off
+  D:000DH         PUBLIC        amp
+  D:000FH         PUBLIC        duty
+  B:0090H.4       PUBLIC        CS_BAR
+  D:00F8H         PUBLIC        UEPINT
+  C:08E6H         PUBLIC        SPI_Init
+  D:00C8H         PUBLIC        T2CON
+  D:0011H         PUBLIC        k
+  D:0013H         PUBLIC        dacval
+  D:00C5H         PUBLIC        SPDAT
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        delay
+  -------         DO            
+  D:0004H         SYMBOL        d
+  -------         ENDDO         
+  C:088CH         LINE#         14
+  C:088CH         LINE#         15
+  C:088CH         LINE#         16
+  C:088CH         LINE#         17
+  C:0897H         LINE#         18
+  C:0897H         LINE#         19
+  C:08A5H         LINE#         20
+  C:08AAH         LINE#         21
+  C:08ACH         LINE#         22
+  -------         ENDPROC       _DELAY
+  -------         PROC          SPI_INIT
+  C:08E6H         LINE#         24
+  C:08E6H         LINE#         25
+  C:08E6H         LINE#         26
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  15:15:50  PAGE 3
+
+
+  C:08E8H         LINE#         27
+  C:08EBH         LINE#         28
+  C:08EEH         LINE#         29
+  C:08F1H         LINE#         31
+  C:08F4H         LINE#         32
+  C:08F7H         LINE#         33
+  C:08FAH         LINE#         34
+  C:08FDH         LINE#         35
+  C:08FFH         LINE#         36
+  -------         ENDPROC       SPI_INIT
+  -------         PROC          IT_SPI
+  C:08CAH         LINE#         38
+  C:08D3H         LINE#         40
+  C:08DAH         LINE#         41
+  C:08DAH         LINE#         42
+  C:08DAH         LINE#         43
+  C:08DDH         LINE#         44
+  C:08DFH         LINE#         45
+  C:08DFH         LINE#         47
+  C:08DFH         LINE#         49
+  C:08DFH         LINE#         51
+  C:08DFH         LINE#         53
+  C:08DFH         LINE#         54
+  C:08DFH         LINE#         55
+  -------         ENDPROC       IT_SPI
+  -------         PROC          _DAC
+  D:0004H         SYMBOL        dacval
+  -------         DO            
+  D:0007H         SYMBOL        sendval
+  -------         ENDDO         
+  C:08ADH         LINE#         78
+  C:08B1H         LINE#         79
+  C:08B1H         LINE#         80
+  C:08B1H         LINE#         81
+  C:08B5H         LINE#         82
+  C:08B7H         LINE#         83
+  C:08B9H         LINE#         84
+  C:08BCH         LINE#         85
+  C:08BEH         LINE#         86
+  C:08C0H         LINE#         87
+  C:08C2H         LINE#         88
+  C:08C5H         LINE#         89
+  C:08C7H         LINE#         90
+  C:08C9H         LINE#         91
+  -------         ENDPROC       _DAC
+  -------         PROC          MAIN
+  C:0900H         LINE#         95
+  C:0900H         LINE#         96
+  C:0900H         LINE#         97
+  C:0903H         LINE#         98
+  C:0906H         LINE#         100
+  C:0909H         LINE#         101
+  C:090FH         LINE#         102
+  C:0916H         LINE#         103
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        ONLY_SPI
+
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  15:15:50  PAGE 4
+
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY?ONLY_SPI
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0095H BYTE ( 7%) *
+******************************************************************************
+
+Program Size: data=22.1 xdata=0 code=293
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

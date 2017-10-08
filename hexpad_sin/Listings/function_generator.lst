@@ -1,0 +1,292 @@
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE FUNCTION_GENERATOR
+OBJECT MODULE PLACED IN .\Objects\function_generator.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\theja_spi_code\function_generator.c OPTIMIZE(8,SPEED) BROWSE DEBUG OB
+                    -JECTEXTEND PRINT(.\Listings\function_generator.lst) TABS(2) OBJECT(.\Objects\function_generator.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          #include "math.h"
+   4          
+   5          int mode=0,flag_t=0,flag_r=0,k=0;
+   6          unsigned int freq; off; amp; duty; dacval;
+   7          //code int sin[500];
+   8          unsigned char serial; //dac1; dac2;
+   9          unsigned char message1[]="TYPE OF WAVEFORM\n";
+  10          unsigned char message2[]="AMPLITUDE\n";
+  11          unsigned char message3[]="FREQUENCY\n";
+  12          unsigned char message4[]="OFFSET\n";
+  13          unsigned char message5[]="DUTY CYCLE in %\n";
+  14          
+  15          sbit CS_BAR = P1^4;                 
+  16          sbit LDAC_BAR = P1^3;
+  17          bit transmit_completed= 0;          
+  18          
+  19          void delay(int delay)             
+  20          {
+  21   1        int d=0;
+  22   1        while(delay>0)
+  23   1        {
+  24   2          for(d=0;d<3;d++);
+  25   2          delay--;
+  26   2        }
+  27   1      }
+  28          
+  29          void init_serial()          //Initialize serial communication and interrupts
+  30          {
+  31   1        SCON = 0xD0;
+  32   1        EA = 1;
+  33   1        ES = 1;
+  34   1      }
+  35          
+  36          void Timer_Init()
+  37          {    
+  38   1        TH1 = -52;
+  39   1        TL1 = -52;
+  40   1        TMOD = 0x20;                  //Configure TMOD 
+  41   1        TR1 = 1;
+  42   1      }
+  43          
+  44          void SPI_Init()
+  45          {
+  46   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
+  47   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  48   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  49   1        SPCON |= 0x10;                  // Master mode 
+  50   1        //SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  51   1        SPCON |= 0x08;
+  52   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  53   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  54   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 2   
+
+  55   1      }
+  56          
+  57          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  58          {
+  59   1        switch  ( SPSTA )         /* read and clear spi status register */
+  60   1        {
+  61   2          case 0x80:
+  62   2            serial=SPDAT; 
+  63   2            transmit_completed=1;/* set software flag */
+  64   2          break;
+  65   2      
+  66   2          case 0x10:
+  67   2               /* put here for mode fault tasking */  
+  68   2          break;
+  69   2        
+  70   2          case 0x40:
+  71   2               /* put here for overrun tasking */ 
+  72   2          break;
+  73   2        }
+  74   1      }
+  75          
+  76          void ISR_Serial(void) interrupt 4
+  77          {
+  78   1       //ISR for serial interrupt
+  79   1        if(TI == 1)
+  80   1        {
+  81   2          TI = 0;
+  82   2          flag_t = 1;
+  83   2          return;
+  84   2        }
+  85   1        else if(RI == 1) 
+  86   1        {
+  87   2          RI = 0;
+  88   2          if(SBUF == 'n')
+  89   2          {
+  90   3            mode = 0;
+  91   3            return;
+  92   3          }
+  93   2          flag_r = 1;
+  94   2          return;
+  95   2        } 
+  96   1      }
+  97            
+  98          void transmit_message(char* str, n)
+  99          {
+ 100   1        int i;
+ 101   1        for(i=0;i<n;i++)
+ 102   1        {
+ 103   2          ACC = str[i];
+ 104   2          ACC = ACC+0;
+ 105   2          TB8 = PSW^0;
+ 106   2          SBUF = str[i];
+ 107   2          while(!flag_t);
+ 108   2          flag_t = 0;
+ 109   2        }
+ 110   1        return;
+ 111   1      }
+ 112          
+ 113          void receive_type(char *c)
+ 114          {
+ 115   1        while(!flag_r);
+ 116   1        *c = SBUF;
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 3   
+
+ 117   1        flag_r = 0;
+ 118   1        return;
+ 119   1      }
+ 120            
+ 121          int receive_data(int r)
+ 122          {
+ 123   1        int i;
+ 124   1        int num;
+ 125   1        int a[4];
+ 126   1        for(i=0;i<r;i++)
+ 127   1        {
+ 128   2          while(!flag_r);
+ 129   2          a[i] = SBUF - '0';
+ 130   2          flag_r = 0;
+ 131   2        }
+ 132   1        if(r == 4)
+ 133   1        {
+ 134   2          num = a[0]*1000 + a[1]*100 + a[2]*10 + a[3];
+ 135   2        }
+ 136   1        else
+ 137   1        {
+ 138   2          num = a[0]*10 + a[1];
+ 139   2        }
+ 140   1        return num;
+ 141   1      }
+ 142          
+ 143          //void send_voltage(int dac)
+ 144          //{
+ 145          //  dac1 = dac/256;
+ 146          //  dac1 = dac1 | 0x70;
+ 147          //  dac2 = dac%256;
+ 148          
+ 149          //  LDAC_BAR = 0;
+ 150          //  CS_BAR = 0;                 // enable ADC as slave       
+ 151          //  SPDAT = dac1;       // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+ 152          //  while(!transmit_completed); // wait end of transmition  
+ 153          //  transmit_completed = 0;     // clear software transfer flag 
+ 154          //    
+ 155          //  SPDAT = dac2;               // 
+ 156          //  while(!transmit_completed); // wait end of transmition 
+ 157          //  transmit_completed = 0;     // clear software transfer flag 
+ 158          //  CS_BAR = 1;                 // disable ADC as slave
+ 159          //    
+ 160          //  delay(2000/freq);
+ 161          //}
+ 162          
+ 163          void send_dac(unsigned int dacval)
+ 164          {
+ 165   1        unsigned char sendval = 0;
+ 166   1        sendval = (dacval >> 8) | 0x70;
+ 167   1        CS_BAR = 0;                 // enable ADC as slave       
+ 168   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+ 169   1        while(!transmit_completed); // wait end of transmition  
+ 170   1        transmit_completed = 0;     // clear software transfer flag 
+ 171   1        sendval = dacval;
+ 172   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+ 173   1        while(!transmit_completed); // wait end of transmition  
+ 174   1        transmit_completed = 0;     // clear software transfer flag 
+ 175   1        CS_BAR = 1;
+ 176   1      }
+ 177          
+ 178          /////////////////////// MAIN PROGRAM///////////////////////////////
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 4   
+
+ 179          
+ 180          void main()
+ 181          {
+ 182   1        //P3 = 0X00;                      // Make Port 3 output 
+ 183   1        P2 = 0x00;                      // Make Port 2 output 
+ 184   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
+ 185   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+ 186   1        P1 |= 0xF0;
+ 187   1        
+ 188   1        init_serial();
+ 189   1        Timer_Init();
+ 190   1        SPI_Init();
+ 191   1        
+ 192   1        while(mode == 0)
+ 193   1        {
+ 194   2          char *type;
+ 195   2          transmit_message(message1,17);
+ 196   2          receive_type(type);
+ 197   2          if(*type == 's') {mode = 1; k = 0;}
+ 198   2          else
+ 199   2          {
+ 200   3            if(*type == 'p') {mode = 2; k = 0;}
+ 201   3            else
+ 202   3            if(*type == 't') {mode = 3; k = 0;}
+ 203   3            else continue;
+ 204   3          }
+ 205   2          transmit_message(message2,10);
+ 206   2          amp = receive_data(4);
+ 207   2          transmit_message(message3,10);
+ 208   2          freq = receive_data(4);
+ 209   2          transmit_message(message4,7);
+ 210   2          off = receive_data(4);
+ 211   2          
+ 212   2          if(mode==2)
+ 213   2          {
+ 214   3            transmit_message(message5,15);
+ 215   3            duty=receive_data(2);
+ 216   3          }
+ 217   2        }
+ 218   1        
+ 219   1        while(mode == 1)
+ 220   1        {
+ 221   2          if(k == 500)
+ 222   2            k = 0;
+ 223   2          
+ 224   2          dacval = 4095*sin(k*6.283/500);
+ 225   2          k++;
+ 226   2          
+ 227   2          send_dac(dacval);
+ 228   2          delay(2000/freq);
+ 229   2        }
+ 230   1        
+ 231   1        while(mode == 2)
+ 232   1        {
+ 233   2          if(k == 10)
+ 234   2            k = 0;
+ 235   2          
+ 236   2          if(k<duty/10)
+ 237   2            dacval = 4095;
+ 238   2          else
+ 239   2            dacval = 0;
+ 240   2          k++;
+C51 COMPILER V9.56.0.0   FUNCTION_GENERATOR                                                10/08/2017 14:56:35 PAGE 5   
+
+ 241   2          
+ 242   2          send_dac(dacval);
+ 243   2          //delay(200/freq);
+ 244   2        }
+ 245   1          
+ 246   1        while(mode == 3)
+ 247   1        {
+ 248   2          if(k == 20)
+ 249   2            k = 0;
+ 250   2          
+ 251   2          if(k<10)
+ 252   2            dacval = 409*k;
+ 253   2          else
+ 254   2            dacval = 409*(20-k);
+ 255   2          k++;
+ 256   2          
+ 257   2          send_dac(dacval);
+ 258   2          //delay(2000/freq);
+ 259   2        }
+ 260   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    862    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     84      20
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
