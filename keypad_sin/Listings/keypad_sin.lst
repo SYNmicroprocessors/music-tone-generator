@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/03/2017 21:55:20 PAGE 1   
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/08/2017 18:35:40 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KEYPAD_SIN
@@ -13,112 +13,225 @@ line level    source
    3          #include "math.h"
    4          
    5          sbit op = P0^0;
-   6          int input=0,x = 0;
+   6          int input=0,x = 0,delayMul=1;
    7          
    8          void delay_5us(int delay);
    9          void transmit_data(unsigned char str);
   10          void transmit_string(char* str,unsigned int  n);
   11          void init_serial();
-  12          void outputTone(void);
-  13          
-  14          void main()
-  15          {
-  16   1      P1 = 0x00;  //JUST TO SAVE POWER :P
-  17   1      P0 = 0x00;  // making P0^1 AS OUTPUT is enough though
-  18   1      init_serial();
-  19   1      transmit_string("Tone Generator",14);
-  20   1      
-  21   1      while(1)
-  22   1      {
-  23   2        ////////////////////////////////////////first
-  24   2      
-  25   2        if(input=='z') 
-  26   2        {
-  27   3          //transmit_string("z ",2);
-  28   3          outputTone();   //1818
-  29   3          //input =0;
-  30   3          transmit_string("done ",4);
-  31   3        }
-  32   2      }
-  33   1      
-  34   1      }
-  35          //-----------------------------------------outputTone-----------------------------
-  36          void outputTone(void)
-  37          {
-  38   1        
-  39   1      }
-  40          //-----------------------------------------receive_data---------------------------
-  41          void receive_data(void) interrupt 4
-  42          {
-  43   1      if(RI==1)
-  44   1      {
-  45   2        RI=0;
-  46   2        input = SBUF;
+  12          void outputTone(unsigned int inputInt);
+  13          float fillTable(int z);
+  14          
+  15          float spi_out=0;
+  16          int k=0;
+  17          unsigned int dacval;i=0;
+  18          unsigned char serial;
+  19          //code int sin[500];
+  20          
+  21          sbit CS_BAR = P1^4;                 
+  22          sbit LDAC_BAR = P1^3;
+  23          bit transmit_completed= 0;          
+  24          
+  25          void SPI_Init()
+  26          {
+  27   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
+  28   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+  29   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+  30   1        SPCON |= 0x10;                  // Master mode 
+  31   1        //SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+  32   1        SPCON |= 0x08;
+  33   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+  34   1        IEN1 |= 0x04;                   // enable spi interrupt 
+  35   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+  36   1        //EA = 1;
+  37   1      }
+  38          
+  39          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  40          {
+  41   1        switch  ( SPSTA )         /* read and clear spi status register */
+  42   1        {
+  43   2          case 0x80:
+  44   2            serial=SPDAT; 
+  45   2            transmit_completed=1;/* set software flag */
+  46   2          break;
   47   2      
-  48   2      }
-  49   1      else if(TI==1)
-  50   1      {
-  51   2        TI=0;
-  52   2      }
-  53   1      }
-  54          //////////////////////////////////////////////////////////////////////////////////
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/03/2017 21:55:20 PAGE 2   
+  48   2          case 0x10:
+  49   2               /* put here for mode fault tasking */  
+  50   2          break;
+  51   2        
+  52   2          case 0x40:
+  53   2               /* put here for overrun tasking */ 
+  54   2          break;
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/08/2017 18:35:40 PAGE 2   
 
-  55          void transmit_string(char* str,unsigned char  n)
-  56          {
-*** WARNING C235 IN LINE 56 OF keypad_sin.c: parameter 2: different types
-  57   1      //function to transmit string of size n over TxD pin.
-  58   1      while(n>0)
-  59   1        {
-  60   2          transmit_data(*str);
-  61   2          str++;
-  62   2          n--;
-  63   2          TI=0;
-  64   2        }
-  65   1      }
-  66          ////////////////////////////////////////////////////////////////////////////////////////
-  67          void transmit_data(unsigned char str)
-  68          {
-  69   1      //function to transmit data over TxD pin.
-  70   1        EA = 0; 
-  71   1        ACC = str;
-  72   1        ACC = ACC+0;
-  73   1        TB8 = PSW^0;
-  74   1        SBUF = str;
-  75   1        while(TI==0);
-  76   1        EA =1;
-  77   1      }
-  78          //////////////////////////////////////////////////////////////////////////////////////////
-  79          void init_serial()
-  80          {
-  81   1      //Initialize serial communication and interrupts
-  82   1        SCON |= 0xD0;
-  83   1        EA = 1;
-  84   1        ES =1;
-  85   1        TMOD |= 0x20;
-  86   1        TH1 = 0xcc;
-  87   1        TR1 = 1;
-  88   1      }
-  89          ////////////////////////////////////////////////////////////////////////////////////////////
-  90          void delay_5us(int delay)
-  91          {
-  92   1        int d=0;
-  93   1        while(delay>0)
-  94   1        {
-  95   2          for(d=0;d<2;d++);
-  96   2          delay--;
-  97   2        }
-  98   1      }
+  55   2        }
+  56   1      }
+  57          
+  58          
+  59          void dac(unsigned int dacval)
+  60          {
+  61   1        unsigned char sendval = 0;
+  62   1          //LDAC_BAR = 0;
+  63   1        sendval = (dacval >> 8) | 0x70;
+  64   1        CS_BAR = 0;                 // enable ADC as slave       
+  65   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  66   1        while(!transmit_completed); // wait end of transmition  
+  67   1        transmit_completed = 0;     // clear software transfer flag 
+  68   1        sendval = dacval;
+  69   1        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  70   1        while(!transmit_completed); // wait end of transmition  
+  71   1        transmit_completed = 0;     // clear software transfer flag 
+  72   1        CS_BAR = 1;
+  73   1        //LDAC_BAR=1;
+  74   1      }
+  75          void main()
+  76          {
+  77   1      
+  78   1        P2 = 0x00;                      // Make Port 2 output 
+  79   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
+  80   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+  81   1        P1 |= 0xF0;
+  82   1        
+  83   1        SPI_Init();
+  84   1      init_serial();
+  85   1      transmit_string("Tone Generator",14);
+  86   1      
+  87   1      while(1)
+  88   1      {
+  89   2        ////////////////////////////////////////first
+  90   2        if(input=='z'){delayMul = 4;}
+  91   2        if(input=='x'){delayMul = 2;}
+  92   2        if(input=='c'){delayMul = 1;}
+  93   2        ///////////////////////////////////////////////third
+  94   2        while(input=='g') 
+  95   2        {
+  96   3          //transmit_string("g ",2);
+  97   3          outputTone(454);
+  98   3          //input =0;
+  99   3          ////transmit_string("done ",4);
+ 100   3        }
+ 101   2        while(input=='h') 
+ 102   2        {
+ 103   3          //transmit_string("h ",2);
+ 104   3          outputTone(405);
+ 105   3          //input =0;
+ 106   3        }
+ 107   2        while(input=='j') 
+ 108   2        {
+ 109   3          //transmit_string("j ",2);
+ 110   3          outputTone(382);
+ 111   3          //input =0;
+ 112   3        }
+ 113   2        while(input=='k') 
+ 114   2        {
+ 115   3          //transmit_string("k ",2);
+ 116   3          outputTone(340);
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/08/2017 18:35:40 PAGE 3   
+
+ 117   3          //input =0;
+ 118   3        }
+ 119   2        while(input=='l') 
+ 120   2        {
+ 121   3          //transmit_string("l ",2);
+ 122   3          outputTone(303);
+ 123   3          //input =0;
+ 124   3        }
+ 125   2      }
+ 126   1      
+ 127   1      }
+ 128          //-----------------------------------------outputTone-----------------------------
+ 129          void outputTone(unsigned int inputInt)
+ 130          {
+ 131   1        x=10000/(inputInt*delayMul);
+ 132   1        while(x>0)
+ 133   1        {
+ 134   2          for(i=0;i<24;i++)
+ 135   2          {
+ 136   3          spi_out= fillTable(i);
+ 137   3          spi_out = 1047*(1+spi_out); 
+ 138   3          dacval = (unsigned int)spi_out;
+ 139   3          dac(dacval);
+ 140   3          delay_5us(inputInt*delayMul/24);
+ 141   3          }
+ 142   2          x--;
+ 143   2        }
+ 144   1      }
+ 145          //-----------------------------------------receive_data---------------------------
+ 146          void receive_data(void) interrupt 4
+ 147          {
+ 148   1      if(RI==1)
+ 149   1      {
+ 150   2        RI=0;
+ 151   2        input = SBUF;
+ 152   2      
+ 153   2      }
+ 154   1      else if(TI==1)
+ 155   1      {
+ 156   2        TI=0;
+ 157   2      }
+ 158   1      }
+ 159          //////////////////////////////////////////////////////////////////////////////////
+ 160          void transmit_string(char* str,unsigned char  n)
+ 161          {
+*** WARNING C235 IN LINE 161 OF keypad_sin.c: parameter 2: different types
+ 162   1      //function to transmit string of size n over TxD pin.
+ 163   1      while(n>0)
+ 164   1        {
+ 165   2          transmit_data(*str);
+ 166   2          str++;
+ 167   2          n--;
+ 168   2          TI=0;
+ 169   2        }
+ 170   1      }
+ 171          ////////////////////////////////////////////////////////////////////////////////////////
+ 172          void transmit_data(unsigned char str)
+ 173          {
+ 174   1      //function to transmit data over TxD pin.
+ 175   1        EA = 0; 
+ 176   1        ACC = str;
+ 177   1        ACC = ACC+0;
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/08/2017 18:35:40 PAGE 4   
+
+ 178   1        TB8 = PSW^0;
+ 179   1        SBUF = str;
+ 180   1        while(TI==0);
+ 181   1        EA =1;
+ 182   1      }
+ 183          //////////////////////////////////////////////////////////////////////////////////////////
+ 184          void init_serial()
+ 185          {
+ 186   1      //Initialize serial communication and interrupts
+ 187   1        SCON |= 0xD0;
+ 188   1        EA = 1;
+ 189   1        ES =1;
+ 190   1        TMOD |= 0x20;
+ 191   1        TH1 = 0xcc;
+ 192   1        TR1 = 1;
+ 193   1      }
+ 194          ////////////////////////////////////////////////////////////////////////////////////////////
+ 195          void delay_5us(int delay)
+ 196          {
+ 197   1        int d=0;
+ 198   1        while(delay>0)
+ 199   1        {
+ 200   2          for(d=0;d<2;d++);
+ 201   2          delay--;
+ 202   2        }
+ 203   1      }
+ 204              float fillTable(int z)
+ 205          {
+ 206   1           return sin(2.0*3.1415927*(float)z/24.0);
+ 207   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    191    ----
-   CONSTANT SIZE    =     21    ----
+   CODE SIZE        =    573    ----
+   CONSTANT SIZE    =     15    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      4       4
+   DATA SIZE        =     17       6
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
+   BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
 
 
