@@ -133,11 +133,14 @@ void outputTone(unsigned int inputInt)
 	{
 		for(i=0;i<24;i++)
 		{
-		spi_out= fillTable(i);
-		spi_out = 1047*(1+spi_out);	
-		dacval = (unsigned int)spi_out;
-		dac(dacval);
-		delay_5us(inputInt*delayMul/24);
+		//spi_out= fillTable(i);
+		//spi_out = 2047*(1+spi_out);	
+			if(i==0){dac(2047);}if(i==1){dac(2577);}if(i==2){dac(3070);}if(i==3){dac(3494);}if(i==4){dac(3820);}if(i==5){dac(4024);}
+if(i==6){dac(4094);}if(i==7){dac(4024);}if(i==8){dac(3820);}if(i==9){dac(3494);}if(i==10){dac(3070);}if(i==11){dac(2577);}
+if(i==12){dac(2047);}if(i==13){dac(1517);}if(i==14){dac(1023);}if(i==15){dac(599);}if(i==16){dac(274);}if(i==17){dac(70);}
+if(i==18){dac(0);}if(i==19){dac(70);}if(i==20){dac(274);}if(i==21){dac(600);}if(i==22){dac(1023);}if(i==23){dac(1517);}
+		//dac(dacval);
+		delay_5us(inputInt*delayMul*0.0416667);
 		}
 		x--;
 	}
