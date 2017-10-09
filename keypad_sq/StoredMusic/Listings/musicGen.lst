@@ -1,0 +1,279 @@
+C51 COMPILER V9.56.0.0   MUSICGEN                                                          10/10/2017 02:02:39 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MUSICGEN
+OBJECT MODULE PLACED IN .\Objects\musicGen.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE musicGen.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -musicGen.lst) TABS(2) OBJECT(.\Objects\musicGen.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          
+   4          sbit op = P0^0;
+   5          int input=0,x = 0;
+   6          
+   7          void delay_5us(int delay);
+   8          void transmit_data(unsigned char str);
+   9          void transmit_string(char* str,unsigned int  n);
+  10          void init_serial();
+  11          void outputTone(unsigned int inputInt);
+  12          //void ISR_Serial(void);
+  13          //-------------------------------------------------MAIN--------------------------
+  14          void main()
+  15          {
+  16   1      P1 = 0x00;  //JUST TO SAVE POWER :P
+  17   1      P0 = 0x00;  // making P0^1 AS OUTPUT is enough though
+  18   1      init_serial();
+  19   1      transmit_string("F - Fur Elise by Beethovan ",27);
+  20   1      transmit_string("B - Birthday song ",18);
+  21   1      //transmit_string("H - Harry Potter ",17);
+  22   1      while(1){
+  23   2      
+  24   2      while(input == 'F')
+  25   2      {
+  26   3        outputTone(191);  //t 
+  27   3        outputTone(180);  //&
+  28   3        outputTone(191);  //t
+  29   3        outputTone(180);  //&
+  30   3        outputTone(191);  //t
+  31   3        outputTone(255);  //w
+  32   3        outputTone(202);  //r
+  33   3        outputTone(227);  //e
+  34   3        outputTone(286);  //q
+  35   3        if(input != 'F'){break;}
+  36   3        delay_5us(5000);
+  37   3        
+  38   3        outputTone(454);  //g
+  39   3        outputTone(382);  //j
+  40   3        outputTone(286);  //q
+  41   3        outputTone(255);  //w
+  42   3        if(input != 'F'){break;}
+  43   3        delay_5us(5000);
+  44   3        
+  45   3        outputTone(382);  //j
+  46   3        outputTone(270);  //$
+  47   3        outputTone(255);  //w
+  48   3        outputTone(227);  //e
+  49   3        if(input != 'F'){break;}
+  50   3        delay_5us(5000);
+  51   3        
+  52   3        outputTone(191);  //t
+  53   3        outputTone(180);  //&
+  54   3        outputTone(191);  //t
+C51 COMPILER V9.56.0.0   MUSICGEN                                                          10/10/2017 02:02:39 PAGE 2   
+
+  55   3        outputTone(180);  //&
+  56   3        outputTone(191);  //t
+  57   3        outputTone(255);  //w
+  58   3        outputTone(202);  //r
+  59   3        outputTone(227);  //e
+  60   3        outputTone(286);  //q
+  61   3        if(input != 'F'){break;}
+  62   3        delay_5us(5000);
+  63   3        
+  64   3        outputTone(454);  //g
+  65   3        outputTone(382);  //j
+  66   3        outputTone(286);  //q
+  67   3        outputTone(255);  //w
+  68   3        if(input != 'F'){break;}
+  69   3        delay_5us(5000);
+  70   3        
+  71   3        outputTone(382);  //j
+  72   3        outputTone(227);  //e
+  73   3        outputTone(255);  //w
+  74   3        outputTone(286);  //q
+  75   3        if(input != 'F'){break;}
+  76   3        delay_5us(2000);  
+  77   3        
+  78   3        outputTone(255);  //w
+  79   3        outputTone(227);  //e
+  80   3        outputTone(202);  //r
+  81   3        outputTone(191);  //t
+  82   3        if(input != 'F'){break;}
+  83   3        delay_5us(5000);
+  84   3        
+  85   3        outputTone(303);  //L
+  86   3        outputTone(170);  //y
+  87   3        outputTone(191);  //t
+  88   3        outputTone(202);  //r
+  89   3        if(input != 'F'){break;}
+  90   3        delay_5us(5000);
+  91   3        
+  92   3        outputTone(340);  //k
+  93   3        outputTone(191);  //t
+  94   3        outputTone(202);  //r
+  95   3        outputTone(227);  //e
+  96   3        if(input != 'F'){break;}
+  97   3        delay_5us(5000);
+  98   3        
+  99   3        outputTone(382);  //j
+ 100   3        outputTone(202);  //r
+ 101   3        outputTone(227);  //e
+ 102   3        outputTone(255);  //w
+ 103   3        if(input != 'F'){break;}
+ 104   3        delay_5us(5000);
+ 105   3        
+ 106   3        outputTone(382);  //j
+ 107   3        delay_5us(2000);
+ 108   3        outputTone(382);  //j
+ 109   3        delay_5us(2000);
+ 110   3        outputTone(191);  //t
+ 111   3        delay_5us(2000);
+ 112   3        outputTone(191);  //t
+ 113   3        delay_5us(2000);
+ 114   3        outputTone(382);  //j
+ 115   3        delay_5us(2000);
+ 116   3        outputTone(382);  //j
+C51 COMPILER V9.56.0.0   MUSICGEN                                                          10/10/2017 02:02:39 PAGE 3   
+
+ 117   3        
+ 118   3        delay_5us(10000);
+ 119   3      }
+ 120   2      /*  //Harry Potter - timing btwn tones is not good
+ 121   2      while(input == 'H')
+ 122   2      { 
+ 123   2        outputTone(255);  delay_5us(1000);  //w
+ 124   2        outputTone(191);  delay_5us(1000);  //t
+ 125   2        outputTone(151);  //u
+ 126   2        outputTone(161);  delay_5us(1000);//*
+ 127   2        outputTone(191);  delay_5us(1000);delay_5us(1000);//t
+ 128   2        outputTone(127);  //o
+ 129   2        outputTone(143);  delay_5us(1000);delay_5us(1000);//i
+ 130   2        outputTone(161);  delay_5us(1000);//*
+ 131   2        outputTone(191);  delay_5us(1000);delay_5us(1000);//t
+ 132   2        outputTone(151);  delay_5us(1000);delay_5us(1000);//u
+ 133   2        outputTone(161);  //*
+ 134   2        outputTone(202);  delay_5us(1000);delay_5us(1000);//r
+ 135   2        outputTone(170);  delay_5us(1000);//y
+ 136   2        outputTone(255);  delay_5us(1000);//w
+ 137   2        
+ 138   2        delay_5us(5000);
+ 139   2      }
+ 140   2      */
+ 141   2      while(input == 'B')
+ 142   2      { 
+ 143   3        outputTone(454);  delay_5us(2000);//g
+ 144   3        outputTone(454);  //g
+ 145   3        outputTone(405);  delay_5us(5000);//h
+ 146   3        outputTone(454);  delay_5us(5000);//g
+ 147   3        outputTone(340);  delay_5us(5000);//k
+ 148   3        outputTone(382);  delay_5us(5000);//j
+ 149   3        delay_5us(5000);
+ 150   3        outputTone(454);  delay_5us(2000);//g
+ 151   3        outputTone(454);  //g
+ 152   3        outputTone(405);  delay_5us(5000);//h
+ 153   3        outputTone(454);  delay_5us(5000);//g
+ 154   3        outputTone(303);  delay_5us(5000);//l
+ 155   3        outputTone(340);  delay_5us(5000);//k
+ 156   3        delay_5us(5000);
+ 157   3        outputTone(454);  delay_5us(2000);//g
+ 158   3        outputTone(454);  //g
+ 159   3        outputTone(227);  delay_5us(5000);//e
+ 160   3        outputTone(286);  delay_5us(5000);//q
+ 161   3        outputTone(340);  delay_5us(5000);//k
+ 162   3        outputTone(382);  delay_5us(5000);//j
+ 163   3        delay_5us(5000);
+ 164   3        outputTone(241);  delay_5us(2000);//%
+ 165   3        outputTone(241);  //%
+ 166   3        outputTone(286);  delay_5us(5000);//q
+ 167   3        outputTone(340);  delay_5us(5000);//k
+ 168   3        outputTone(303);  delay_5us(5000);//l
+ 169   3        outputTone(340);  delay_5us(5000);//k
+ 170   3      
+ 171   3      delay_5us(10000);
+ 172   3      }
+ 173   2      
+ 174   2      }
+ 175   1      }
+ 176          //-----------------------------------------outputTone-----------------------------
+ 177          void outputTone(unsigned int inputInt)
+ 178          {
+C51 COMPILER V9.56.0.0   MUSICGEN                                                          10/10/2017 02:02:39 PAGE 4   
+
+ 179   1        x=15000/inputInt;
+ 180   1        while(x>0)
+ 181   1        {
+ 182   2          op = 1;
+ 183   2          delay_5us(inputInt*0.5);
+ 184   2          op = 0;
+ 185   2          delay_5us(inputInt*0.5);
+ 186   2          x--;
+ 187   2        }
+ 188   1      }
+ 189          //-----------------------------------------receive_data---------------------------
+ 190          void receive_data(void) interrupt 4
+ 191          {
+ 192   1      if(RI==1)
+ 193   1      {
+ 194   2        RI=0;
+ 195   2        input = SBUF;
+ 196   2      }
+ 197   1      else if(TI==1)
+ 198   1      {
+ 199   2        TI=0;
+ 200   2      }
+ 201   1      }
+ 202          //////////////////////////////////////////////////////////////////////////////////
+ 203          void transmit_string(char* str,unsigned char  n)
+ 204          {
+*** WARNING C235 IN LINE 204 OF musicGen.c: parameter 2: different types
+ 205   1      //function to transmit string of size n over TxD pin.
+ 206   1      while(n>0)
+ 207   1        {
+ 208   2          transmit_data(*str);
+ 209   2          str++;
+ 210   2          n--;
+ 211   2          TI=0;
+ 212   2        }
+ 213   1      }
+ 214          ////////////////////////////////////////////////////////////////////////////////////////
+ 215          void transmit_data(unsigned char str)
+ 216          {
+ 217   1      //function to transmit data over TxD pin.
+ 218   1        EA = 0; 
+ 219   1        ACC = str;
+ 220   1        ACC = ACC+0;
+ 221   1        TB8 = PSW^0;
+ 222   1        SBUF = str;
+ 223   1        while(TI==0);
+ 224   1        EA =1;
+ 225   1      }
+ 226          //////////////////////////////////////////////////////////////////////////////////////////
+ 227          void init_serial()
+ 228          {
+ 229   1      //Initialize serial communication and interrupts
+ 230   1        SCON |= 0xD0;
+ 231   1        EA = 1;
+ 232   1        ES =1;
+ 233   1        TMOD |= 0x20;
+ 234   1        TH1 = 0xcc;
+ 235   1        TR1 = 1;
+ 236   1      }
+ 237          ////////////////////////////////////////////////////////////////////////////////////////////
+ 238          void delay_5us(int delay)
+ 239          {
+C51 COMPILER V9.56.0.0   MUSICGEN                                                          10/10/2017 02:02:39 PAGE 5   
+
+ 240   1        int d=0;
+ 241   1        while(delay>0)
+ 242   1        {
+ 243   2          for(d=0;d<2;d++);
+ 244   2          delay--;
+ 245   2        }
+ 246   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1093    ----
+   CONSTANT SIZE    =     47    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
