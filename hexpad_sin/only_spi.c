@@ -101,13 +101,13 @@ void main()
 	P1 |= 0xF0;
 	
 	SPI_Init();
-	dacval  =  95;
+	dacval  =  0xAAA;
 	
 	i=5;
 
 		while(1)
 			dac(dacval);
-		
+	
 		
 	
 

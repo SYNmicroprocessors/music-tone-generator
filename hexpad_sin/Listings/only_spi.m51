@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        10/08/2017  17:03:28  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/09/2017  16:08:36  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -35,11 +35,11 @@ LINK MAP OF MODULE:  .\Objects\only_spi (ONLY_SPI)
                     004EH     07B2H                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
             CODE    088CH     0021H     UNIT         ?PR?_DELAY?ONLY_SPI
-            CODE    08ADH     001FH     UNIT         ?PR?MAIN?ONLY_SPI
-            CODE    08CCH     001DH     UNIT         ?PR?_DAC?ONLY_SPI
-            CODE    08E9H     001CH     UNIT         ?PR?IT_SPI?ONLY_SPI
-            CODE    0905H     001AH     UNIT         ?PR?SPI_INIT?ONLY_SPI
-            CODE    091FH     000BH     UNIT         ?C_INITSEG
+            CODE    08ADH     0020H     UNIT         ?PR?MAIN?ONLY_SPI
+            CODE    08CDH     001DH     UNIT         ?PR?_DAC?ONLY_SPI
+            CODE    08EAH     001CH     UNIT         ?PR?IT_SPI?ONLY_SPI
+            CODE    0906H     001AH     UNIT         ?PR?SPI_INIT?ONLY_SPI
+            CODE    0920H     000BH     UNIT         ?C_INITSEG
 
 
 
@@ -59,7 +59,7 @@ SEGMENT
 
 
 
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  17:03:28  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  16:08:36  PAGE 2
 
 
 SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
@@ -85,8 +85,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
   B:0020H.0       PUBLIC        transmit_completed
   D:00D8H         PUBLIC        CCON
   C:08ADH         PUBLIC        main
-  C:08CCH         PUBLIC        _dac
-  C:08E9H         PUBLIC        it_SPI
+  C:08CDH         PUBLIC        _dac
+  C:08EAH         PUBLIC        it_SPI
   D:0009H         PUBLIC        freq
   D:0098H         PUBLIC        SCON
   D:0088H         PUBLIC        TCON
@@ -95,63 +95,63 @@ SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
   D:000FH         PUBLIC        duty
   B:0090H.4       PUBLIC        CS_BAR
   D:00F8H         PUBLIC        UEPINT
-  C:0905H         PUBLIC        SPI_Init
+  C:0906H         PUBLIC        SPI_Init
   D:00C8H         PUBLIC        T2CON
   D:0011H         PUBLIC        i
   D:0013H         PUBLIC        k
   D:0015H         PUBLIC        dacval
   D:00C5H         PUBLIC        SPDAT
   -------         PROC          SPI_INIT
-  C:0905H         LINE#         14
-  C:0905H         LINE#         15
-  C:0905H         LINE#         16
-  C:0907H         LINE#         17
-  C:090AH         LINE#         18
-  C:090DH         LINE#         19
-  C:0910H         LINE#         21
-  C:0913H         LINE#         22
-  C:0916H         LINE#         23
-  C:0919H         LINE#         24
-  C:091CH         LINE#         25
-  C:091EH         LINE#         26
+  C:0906H         LINE#         14
+  C:0906H         LINE#         15
+  C:0906H         LINE#         16
+  C:0908H         LINE#         17
+  C:090BH         LINE#         18
+  C:090EH         LINE#         19
+  C:0911H         LINE#         21
+  C:0914H         LINE#         22
+  C:0917H         LINE#         23
+  C:091AH         LINE#         24
+  C:091DH         LINE#         25
+  C:091FH         LINE#         26
   -------         ENDPROC       SPI_INIT
   -------         PROC          IT_SPI
-  C:08E9H         LINE#         28
-  C:08F2H         LINE#         30
-  C:08F9H         LINE#         31
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  17:03:28  PAGE 3
+  C:08EAH         LINE#         28
+  C:08F3H         LINE#         30
+  C:08FAH         LINE#         31
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  16:08:36  PAGE 3
 
 
-  C:08F9H         LINE#         32
-  C:08F9H         LINE#         33
-  C:08FCH         LINE#         34
-  C:08FEH         LINE#         35
-  C:08FEH         LINE#         37
-  C:08FEH         LINE#         39
-  C:08FEH         LINE#         41
-  C:08FEH         LINE#         43
-  C:08FEH         LINE#         44
-  C:08FEH         LINE#         45
+  C:08FAH         LINE#         32
+  C:08FAH         LINE#         33
+  C:08FDH         LINE#         34
+  C:08FFH         LINE#         35
+  C:08FFH         LINE#         37
+  C:08FFH         LINE#         39
+  C:08FFH         LINE#         41
+  C:08FFH         LINE#         43
+  C:08FFH         LINE#         44
+  C:08FFH         LINE#         45
   -------         ENDPROC       IT_SPI
   -------         PROC          _DAC
   D:0004H         SYMBOL        dacval
   -------         DO            
   D:0007H         SYMBOL        sendval
   -------         ENDDO         
-  C:08CCH         LINE#         68
-  C:08D0H         LINE#         69
-  C:08D0H         LINE#         70
-  C:08D0H         LINE#         72
-  C:08D4H         LINE#         73
-  C:08D6H         LINE#         74
-  C:08D8H         LINE#         75
-  C:08DBH         LINE#         76
-  C:08DDH         LINE#         77
-  C:08DFH         LINE#         78
-  C:08E1H         LINE#         79
-  C:08E4H         LINE#         80
-  C:08E6H         LINE#         81
-  C:08E8H         LINE#         83
+  C:08CDH         LINE#         68
+  C:08D1H         LINE#         69
+  C:08D1H         LINE#         70
+  C:08D1H         LINE#         72
+  C:08D5H         LINE#         73
+  C:08D7H         LINE#         74
+  C:08D9H         LINE#         75
+  C:08DCH         LINE#         76
+  C:08DEH         LINE#         77
+  C:08E0H         LINE#         78
+  C:08E2H         LINE#         79
+  C:08E5H         LINE#         80
+  C:08E7H         LINE#         81
+  C:08E9H         LINE#         83
   -------         ENDPROC       _DAC
   -------         PROC          _DELAY
   D:0006H         SYMBOL        delay
@@ -176,10 +176,10 @@ SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
   C:08B3H         LINE#         101
   C:08B6H         LINE#         103
   C:08B9H         LINE#         104
-  C:08BEH         LINE#         106
-  C:08C3H         LINE#         108
-  C:08C3H         LINE#         109
-BL51 BANKED LINKER/LOCATER V6.22                                                      10/08/2017  17:03:28  PAGE 4
+  C:08BFH         LINE#         106
+  C:08C4H         LINE#         108
+  C:08C4H         LINE#         109
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  16:08:36  PAGE 4
 
 
   -------         ENDPROC       MAIN
@@ -189,8 +189,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\only_spi (ONLY_SPI)
     SEGMENT: ?PR?_DELAY?ONLY_SPI
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00A0H BYTE ( 7%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00A1H BYTE ( 7%) *
 ******************************************************************************
 
-Program Size: data=24.1 xdata=0 code=304
+Program Size: data=24.1 xdata=0 code=305
 LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
