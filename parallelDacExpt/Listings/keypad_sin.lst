@@ -1,0 +1,193 @@
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:13:39 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KEYPAD_SIN
+OBJECT MODULE PLACED IN .\Objects\keypad_sin.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE keypad_sin.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\keypad_sin.lst) TABS(2) OBJECT(.\Objects\keypad_sin.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          #include "math.h"
+   4          
+   5          sbit op = P0^0;
+   6          int input=0,x = 0,delayMul=1;
+   7          
+   8          void delay_5us(int delay);
+   9          void transmit_data(unsigned char str);
+  10          void transmit_string(char* str,unsigned int  n);
+  11          void init_serial();
+  12          void outputTone(unsigned int inputInt);
+  13          
+  14          float spi_out=0;
+  15          int k=0;
+  16          unsigned int dacval;i=0;
+  17          unsigned char serial;
+  18          //code int sin[500];
+  19          
+  20          sbit CS_BAR = P1^4;                 
+  21          sbit LDAC_BAR = P1^3;
+  22          bit transmit_completed= 0;          
+  23          
+  24          
+  25          void main()
+  26          {
+  27   1      
+  28   1        P2 = 0x00;                      // Make Port 2 output 
+  29   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
+  30   1        P0 = 0xF0;                      // Make Port 0 Pins 0,1,2 output
+  31   1        P1 |= 0xF0;
+  32   1      
+  33   1      init_serial();
+  34   1      transmit_string("Tone Generator",14);
+  35   1      
+  36   1      while(1)
+  37   1      {
+  38   2        ////////////////////////////////////////first
+  39   2        if(input=='z'){delayMul = 4;}
+  40   2        if(input=='x'){delayMul = 2;}
+  41   2        if(input=='c'){delayMul = 1;}
+  42   2        ///////////////////////////////////////////////third
+  43   2        while(input=='g') 
+  44   2        {
+  45   3          //transmit_string("g ",2);
+  46   3          outputTone(454);
+  47   3          //input =0;
+  48   3          ////transmit_string("done ",4);
+  49   3        }
+  50   2        while(input=='h') 
+  51   2        {
+  52   3          //transmit_string("h ",2);
+  53   3          outputTone(405);
+  54   3          //input =0;
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:13:39 PAGE 2   
+
+  55   3        }
+  56   2        while(input=='j') 
+  57   2        {
+  58   3          //transmit_string("j ",2);
+  59   3          outputTone(382);
+  60   3          //input =0;
+  61   3        }
+  62   2        while(input=='k') 
+  63   2        {
+  64   3          //transmit_string("k ",2);
+  65   3          outputTone(340);
+  66   3          //input =0;
+  67   3        }
+  68   2        while(input=='l') 
+  69   2        {
+  70   3          //transmit_string("l ",2);
+  71   3          outputTone(303);
+  72   3          //input =0;
+  73   3        }
+  74   2      }
+  75   1      
+  76   1      }
+  77          //-----------------------------------------outputTone-----------------------------
+  78          void outputTone(unsigned int inputInt)
+  79          {
+  80   1        x=10000/(inputInt*delayMul);
+  81   1        while(x>0)
+  82   1        {
+  83   2          for(i=0;i<8;i++)
+  84   2          {
+  85   3          //spi_out= fillTable(i);
+  86   3          //spi_out = 2047*(1+spi_out); 
+  87   3      /*if(i==0){P0 = 00;}
+  88   3      if(i==1){P0 = 64;}
+  89   3      if(i==2){P0 = 128;}
+  90   3      if(i==3){P0 = 255;}
+  91   3      if(i==4){P0 = 128;}
+  92   3      if(i==5){P0 = 34;}
+  93   3      if(i==6){P0 = 128;}
+  94   3      if(i==7){P0 = 128;}
+  95   3      */
+  96   3            P0 = 0xff;
+  97   3        //  delay_5us(inputInt*delayMul*0.0416667);
+  98   3          }
+  99   2          x--;
+ 100   2        }
+ 101   1      }
+ 102          //-----------------------------------------receive_data---------------------------
+ 103          void receive_data(void) interrupt 4
+ 104          {
+ 105   1      if(RI==1)
+ 106   1      {
+ 107   2        RI=0;
+ 108   2        input = SBUF;
+ 109   2      
+ 110   2      }
+ 111   1      else if(TI==1)
+ 112   1      {
+ 113   2        TI=0;
+ 114   2      }
+ 115   1      }
+ 116          //////////////////////////////////////////////////////////////////////////////////
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:13:39 PAGE 3   
+
+ 117          void transmit_string(char* str,unsigned char  n)
+ 118          {
+*** WARNING C235 IN LINE 118 OF keypad_sin.c: parameter 2: different types
+ 119   1      //function to transmit string of size n over TxD pin.
+ 120   1      while(n>0)
+ 121   1        {
+ 122   2          transmit_data(*str);
+ 123   2          str++;
+ 124   2          n--;
+ 125   2          TI=0;
+ 126   2        }
+ 127   1      }
+ 128          ////////////////////////////////////////////////////////////////////////////////////////
+ 129          void transmit_data(unsigned char str)
+ 130          {
+ 131   1      //function to transmit data over TxD pin.
+ 132   1        EA = 0; 
+ 133   1        ACC = str;
+ 134   1        ACC = ACC+0;
+ 135   1        TB8 = PSW^0;
+ 136   1        SBUF = str;
+ 137   1        while(TI==0);
+ 138   1        EA =1;
+ 139   1      }
+ 140          //////////////////////////////////////////////////////////////////////////////////////////
+ 141          void init_serial()
+ 142          {
+ 143   1      //Initialize serial communication and interrupts
+ 144   1        SCON |= 0xD0;
+ 145   1        EA = 1;
+ 146   1        ES =1;
+ 147   1        TMOD |= 0x20;
+ 148   1        TH1 = 0xcc;
+ 149   1        TR1 = 1;
+ 150   1      }
+ 151          ////////////////////////////////////////////////////////////////////////////////////////////
+ 152          void delay_5us(int delay)
+ 153          {
+ 154   1        int d=0;
+ 155   1        while(delay>0)
+ 156   1        {
+ 157   2          for(d=0;d<2;d++);
+ 158   2          delay--;
+ 159   2        }
+ 160   1      }
+ 161              float fillTable(int z)
+ 162          {
+ 163   1           return sin(2.0*3.1415927*(float)z/24.0);
+ 164   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    399    ----
+   CONSTANT SIZE    =     15    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

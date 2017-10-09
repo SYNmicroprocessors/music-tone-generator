@@ -1,0 +1,341 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/09/2017  17:13:39  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\keypad_sin.obj TO .\Objects\keypad_sin PRINT (.\Listings\keypad_sin.m51) RAMSIZE (
+>> 256)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\keypad_sin.obj (KEYPAD_SIN)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPDIV)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FCAST)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (SIN)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPADD)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?CASTF)
+  C:\KEIL_V5\C51\LIB\C51FPS.LIB (?C?FPSERIES)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?IMUL)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?UIDIV)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LNEG)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LLDCODE)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LLDCODE0)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\keypad_sin (KEYPAD_SIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0011H     UNIT         ?DT?KEYPAD_SIN
+            DATA    0019H     0004H     UNIT         ?DT?SIN?SIN
+                    001DH     0003H                  *** GAP ***
+            BIT     0020H.0   0000H.1   UNIT         ?BI?KEYPAD_SIN
+            BIT     0020H.1   0000H.1   UNIT         ?BI?SIN?SIN
+                    0020H.2   0000H.6                *** GAP ***
+            DATA    0021H     0004H     UNIT         _DATA_GROUP_
+            IDATA   0025H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0020H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+                    0026H     07DAH                  *** GAP ***
+            CODE    0800H     0458H     UNIT         ?C?LIB_CODE
+            CODE    0C58H     016EH     UNIT         ?PR?SIN?SIN
+            CODE    0DC6H     0095H     UNIT         ?PR?MAIN?KEYPAD_SIN
+            CODE    0E5BH     008CH     UNIT         ?C_C51STARTUP
+            CODE    0EE7H     004AH     UNIT         ?PR?_OUTPUTTONE?KEYPAD_SIN
+            CODE    0F31H     002EH     UNIT         ?PR?_TRANSMIT_STRING?KEYPAD_SIN
+            CODE    0F5FH     0021H     UNIT         ?PR?_DELAY_5US?KEYPAD_SIN
+            CODE    0F80H     0021H     UNIT         ?PR?_FILLTABLE?KEYPAD_SIN
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  17:13:39  PAGE 2
+
+
+            CODE    0FA1H     001FH     UNIT         ?PR?RECEIVE_DATA?KEYPAD_SIN
+            CODE    0FC0H     001DH     UNIT         ?C_INITSEG
+            CODE    0FDDH     0011H     UNIT         ?PR?_TRANSMIT_DATA?KEYPAD_SIN
+            CODE    0FEEH     0010H     UNIT         ?PR?INIT_SERIAL?KEYPAD_SIN
+            CODE    0FFEH     000FH     UNIT         ?CO?KEYPAD_SIN
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\keypad_sin (KEYPAD_SIN)
+
+
+SEGMENT                                   DATA_GROUP 
+  +--> CALLED SEGMENT                   START    LENGTH
+-------------------------------------------------------
+?C_C51STARTUP                           -----    -----
+  +--> ?PR?MAIN?KEYPAD_SIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?KEYPAD_SIN                     -----    -----
+  +--> ?PR?INIT_SERIAL?KEYPAD_SIN
+  +--> ?CO?KEYPAD_SIN
+  +--> ?PR?_TRANSMIT_STRING?KEYPAD_SIN
+  +--> ?PR?_OUTPUTTONE?KEYPAD_SIN
+
+?PR?_TRANSMIT_STRING?KEYPAD_SIN         0021H    0004H
+  +--> ?PR?_TRANSMIT_DATA?KEYPAD_SIN
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\keypad_sin (KEYPAD_SIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        KEYPAD_SIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:0008H         PUBLIC        serial
+  D:00C0H         PUBLIC        P4
+  B:00A8H.7       PUBLIC        EA
+  D:0009H         PUBLIC        spi_out
+  D:00A8H         PUBLIC        IEN0
+  C:0F5FH         PUBLIC        _delay_5us
+  C:0F80H         PUBLIC        _fillTable
+  D:00B8H         PUBLIC        IPL0
+  B:00A8H.4       PUBLIC        ES
+  C:0FEEH         PUBLIC        init_serial
+  B:0098H.0       PUBLIC        RI
+  B:0020H.0       PUBLIC        transmit_completed
+  B:0098H.1       PUBLIC        TI
+  D:00D8H         PUBLIC        CCON
+  C:0DC6H         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:000DH         PUBLIC        input
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  17:13:39  PAGE 3
+
+
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:000FH         PUBLIC        delayMul
+  D:00E0H         PUBLIC        ACC
+  D:008DH         PUBLIC        TH1
+  C:0EE7H         PUBLIC        _outputTone
+  B:0098H.3       PUBLIC        TB8
+  D:00F8H         PUBLIC        UEPINT
+  B:0088H.6       PUBLIC        TR1
+  C:0FA1H         PUBLIC        receive_data
+  D:00C8H         PUBLIC        T2CON
+  D:0011H         PUBLIC        i
+  D:0013H         PUBLIC        k
+  D:0015H         PUBLIC        dacval
+  C:0F31H         PUBLIC        _transmit_string
+  C:0FDDH         PUBLIC        _transmit_data
+  D:0017H         PUBLIC        x
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  C:0DC6H         LINE#         25
+  C:0DC6H         LINE#         26
+  C:0DC6H         LINE#         28
+  C:0DC9H         LINE#         30
+  C:0DCCH         LINE#         31
+  C:0DCFH         LINE#         33
+  C:0DD2H         LINE#         34
+  C:0DDFH         LINE#         36
+  C:0DDFH         LINE#         37
+  C:0DDFH         LINE#         39
+  C:0DECH         LINE#         40
+  C:0DF9H         LINE#         41
+  C:0E06H         LINE#         43
+  C:0E0EH         LINE#         44
+  C:0E0EH         LINE#         46
+  C:0E15H         LINE#         49
+  C:0E17H         LINE#         50
+  C:0E1FH         LINE#         51
+  C:0E1FH         LINE#         53
+  C:0E26H         LINE#         55
+  C:0E28H         LINE#         56
+  C:0E30H         LINE#         57
+  C:0E30H         LINE#         59
+  C:0E37H         LINE#         61
+  C:0E39H         LINE#         62
+  C:0E41H         LINE#         63
+  C:0E41H         LINE#         65
+  C:0E48H         LINE#         67
+  C:0E4AH         LINE#         68
+  C:0E52H         LINE#         69
+  C:0E52H         LINE#         71
+  C:0E59H         LINE#         73
+  -------         ENDPROC       MAIN
+  -------         PROC          _OUTPUTTONE
+  D:0006H         SYMBOL        inputInt
+  C:0EE7H         LINE#         78
+  C:0EE7H         LINE#         79
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  17:13:39  PAGE 4
+
+
+  C:0EE7H         LINE#         80
+  C:0F03H         LINE#         81
+  C:0F10H         LINE#         82
+  C:0F10H         LINE#         83
+  C:0F15H         LINE#         84
+  C:0F15H         LINE#         96
+  C:0F18H         LINE#         98
+  C:0F26H         LINE#         99
+  C:0F2EH         LINE#         100
+  C:0F30H         LINE#         101
+  -------         ENDPROC       _OUTPUTTONE
+  -------         PROC          RECEIVE_DATA
+  C:0FA1H         LINE#         103
+  C:0FA8H         LINE#         105
+  C:0FABH         LINE#         106
+  C:0FABH         LINE#         107
+  C:0FADH         LINE#         108
+  C:0FB4H         LINE#         110
+  C:0FB6H         LINE#         111
+  C:0FB9H         LINE#         112
+  C:0FB9H         LINE#         113
+  C:0FBBH         LINE#         114
+  C:0FBBH         LINE#         115
+  -------         ENDPROC       RECEIVE_DATA
+  -------         PROC          _TRANSMIT_STRING
+  D:0021H         SYMBOL        str
+  D:0024H         SYMBOL        n
+  C:0F31H         LINE#         117
+  C:0F39H         LINE#         118
+  C:0F39H         LINE#         120
+  C:0F40H         LINE#         121
+  C:0F40H         LINE#         122
+  C:0F4DH         LINE#         123
+  C:0F58H         LINE#         124
+  C:0F5AH         LINE#         125
+  C:0F5CH         LINE#         126
+  C:0F5EH         LINE#         127
+  -------         ENDPROC       _TRANSMIT_STRING
+  -------         PROC          _TRANSMIT_DATA
+  D:0007H         SYMBOL        str
+  C:0FDDH         LINE#         129
+  C:0FDDH         LINE#         130
+  C:0FDDH         LINE#         132
+  C:0FDFH         LINE#         133
+  C:0FE0H         LINE#         134
+  C:0FE0H         LINE#         135
+  C:0FE6H         LINE#         136
+  C:0FE8H         LINE#         137
+  C:0FEBH         LINE#         138
+  C:0FEDH         LINE#         139
+  -------         ENDPROC       _TRANSMIT_DATA
+  -------         PROC          INIT_SERIAL
+  C:0FEEH         LINE#         141
+  C:0FEEH         LINE#         142
+  C:0FEEH         LINE#         144
+  C:0FF1H         LINE#         145
+  C:0FF3H         LINE#         146
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  17:13:39  PAGE 5
+
+
+  C:0FF5H         LINE#         147
+  C:0FF8H         LINE#         148
+  C:0FFBH         LINE#         149
+  C:0FFDH         LINE#         150
+  -------         ENDPROC       INIT_SERIAL
+  -------         PROC          _DELAY_5US
+  D:0006H         SYMBOL        delay
+  -------         DO            
+  D:0004H         SYMBOL        d
+  -------         ENDDO         
+  C:0F5FH         LINE#         152
+  C:0F5FH         LINE#         153
+  C:0F5FH         LINE#         154
+  C:0F5FH         LINE#         155
+  C:0F6AH         LINE#         156
+  C:0F6AH         LINE#         157
+  C:0F78H         LINE#         158
+  C:0F7DH         LINE#         159
+  C:0F7FH         LINE#         160
+  -------         ENDPROC       _DELAY_5US
+  -------         PROC          _FILLTABLE
+  D:0006H         SYMBOL        z
+  C:0F80H         LINE#         161
+  C:0F80H         LINE#         162
+  C:0F80H         LINE#         163
+  C:0FA0H         LINE#         164
+  -------         ENDPROC       _FILLTABLE
+  -------         ENDMOD        KEYPAD_SIN
+
+  -------         MODULE        ?C?FPMUL
+  C:0800H         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FPDIV
+  C:0909H         PUBLIC        ?C?FPDIV
+  -------         ENDMOD        ?C?FPDIV
+
+  -------         MODULE        ?C?FCAST
+  C:09B0H         PUBLIC        ?C?FCASTC
+  C:09ABH         PUBLIC        ?C?FCASTI
+  C:09A6H         PUBLIC        ?C?FCASTL
+  -------         ENDMOD        ?C?FCAST
+
+  -------         MODULE        SIN
+  C:0CA0H         PUBLIC        _COS
+  C:0CB6H         PUBLIC        _SIN
+  C:0CE8H         PUBLIC        _TAN
+  -------         ENDMOD        SIN
+
+  -------         MODULE        ?C?FPADD
+  C:0A35H         PUBLIC        ?C?FPADD
+  C:0A31H         PUBLIC        ?C?FPSUB
+  -------         ENDMOD        ?C?FPADD
+
+  -------         MODULE        ?C?CASTF
+  C:0B26H         PUBLIC        ?C?CASTF
+  -------         ENDMOD        ?C?CASTF
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/09/2017  17:13:39  PAGE 6
+
+
+
+  -------         MODULE        ?C?CLDPTR
+  C:0BAAH         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?IMUL
+  C:0BC3H         PUBLIC        ?C?IMUL
+  -------         ENDMOD        ?C?IMUL
+
+  -------         MODULE        ?C?UIDIV
+  C:0BD5H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+  -------         MODULE        ?C?LNEG
+  C:0C2AH         PUBLIC        ?C?LNEG
+  -------         ENDMOD        ?C?LNEG
+
+  -------         MODULE        ?C?LLDCODE
+  C:0C38H         PUBLIC        ?C?LLDCODE
+  -------         ENDMOD        ?C?LLDCODE
+
+  -------         MODULE        ?C?LLDCODE0
+  C:0C48H         PUBLIC        ?C?LLDCODE0
+  -------         ENDMOD        ?C?LLDCODE0
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY_5US?KEYPAD_SIN
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_FILLTABLE?KEYPAD_SIN
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 01BDH BYTE (21%) *
+******************************************************************************
+
+Program Size: data=34.2 xdata=0 code=2067
+LINK/LOCATE RUN COMPLETE.  2 WARNING(S),  0 ERROR(S)
