@@ -10,12 +10,12 @@ void transmit_data(unsigned char str);
 void transmit_string(char* str,unsigned int  n);
 void init_serial();
 void outputTone(unsigned int inputInt);
-float fillTable(int z);
-unsigned int table[24];
+//unsigned int fillTable(int z);
+code unsigned int table[24]= {2047,2577,3070,3494,3820,4024,4094,4024,3820,3494,3070,2577,2047,1517,1023,599,274,70,0,70,274,600,1023,1517};
 
 float spi_out=0;
-int k=0;
-unsigned int dacval;i=0;
+unsigned int k=0,i=0;
+unsigned int dacval;
 unsigned char serial;
 //code int sin[500];
 
@@ -37,13 +37,16 @@ void SPI_Init()
 	SPCON |= 0x40;                	// run spi;ENABLE SPI INTERFACE SPEN= 1 
 	//EA = 1;
 }
-void init_table(void)
+/*void init_table(void)
 {
-if(i==0){table[i]=2047;}if(i==1){table[i]=2577;}if(i==2){table[i]=3070;}if(i==3){table[i]=3494;}if(i==4){table[i]=3820;}if(i==5){table[i]=4024;}
+/*if(i==0){table[i]=2047;}if(i==1){table[i]=2577;}if(i==2){table[i]=3070;}if(i==3){table[i]=3494;}if(i==4){table[i]=3820;}if(i==5){table[i]=4024;}
 if(i==6){table[i]=4094;}if(i==7){table[i]=4024;}if(i==8){table[i]=3820;}if(i==9){table[i]=3494;}if(i==10){table[i]=3070;}if(i==11){table[i]=2577;}
 if(i==12){table[i]=2047;}if(i==13){table[i]=1517;}if(i==14){table[i]=1023;}if(i==15){table[i]=599;}if(i==16){table[i]=274;}if(i==17){table[i]=70;}
 if(i==18){table[i]=0;}if(i==19){table[i]=70;}if(i==20){table[i]=274;}if(i==21){table[i]=600;}if(i==22){table[i]=1023;}if(i==23){table[i]=1517;}
-}
+
+//for(i=0;i<36;i++)
+	//table[i] = fillTable(i);
+}*/
 void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
 {
 	switch	( SPSTA )         /* read and clear spi status register */
@@ -93,7 +96,7 @@ void main()
 	
 	SPI_Init();
 init_serial();
-	init_table();
+//	init_table();
 transmit_string("Tone Generator",14);
 
 while(1)
@@ -344,7 +347,7 @@ if(i==18){dac(0);}if(i==19){dac(70);}if(i==20){dac(274);}if(i==21){dac(600);}if(
 	for(k=0;k<24;k++)
 		{
 		dac(table[k]);
-		delay_5us(inputInt*delayMul*0.0416667);
+		delay_5us(inputInt*delayMul*0.0041667);
 		}
 		//x--;
 	//}
@@ -408,4 +411,8 @@ void delay_5us(int delay)
 		delay--;
 	}
 }
+/*unsigned int fillTable(unsigned int z)
+{
+	   return 2046*(1+sin(2.0*3.1415927*z*0.02778));
+}*/
 	

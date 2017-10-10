@@ -3,24 +3,35 @@
 
 bit transmit_completed=0;
 sbit CS_BAR = P1^4;
-sbit LED5 = P1^5;
-sbit LED7 = P1^7;
 unsigned char serial_data;								// Chip Select for the ADC
 void SPI_Init();
 void dac(unsigned int data1);
+unsigned int k=0;
 void Delay(int delay);
+code unsigned int table[24]= {2047,2577,3070,3494,3820,4024,4094,4024,3820,3494,3070,2577,2047,1517,1023,599,274,70,0,70,274,600,1023,1517};
+void outputTone(unsigned int inputInt)
+{
 
+	for(k=0;k<24;k++)
+		{
+		dac(table[k]);
+		//delay_5us(100*inputInt*delayMul*0.041667);
+		}
+		//x--;
+	//}
+}
 void main(void)
 {
 	P2 = 0x00;											// Make Port 2 output 
-	P1 &= 0x00;											// Make P1 Pin4-7 output
+	//P1 &= 0xEF;											// Make P1 Pin4-7 output
+	P0 &= 0xF0;											// Make Port 0 Pins 0,1,2 output
+	P1 |= 0xF0;
 	
-SPI_Init();
+	SPI_Init();
 	
 while(1)
 {
-	dac(4095);Delay(10000);
-	LED7 =1;
+	outputTone(454);
 		 //dac(4095);Delay(10000);
 	
 }

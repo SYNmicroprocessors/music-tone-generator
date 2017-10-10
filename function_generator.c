@@ -258,7 +258,7 @@ void main()
 		k++;
 		
 		send_dac(dacval);
-		//delay(2400/freq - 16);
+		delay(2400/freq - 16);
 	}
 	
 	//pulse train; duty cycle in multiples of 10

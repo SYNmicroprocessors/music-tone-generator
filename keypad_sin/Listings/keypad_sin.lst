@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 1   
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE KEYPAD_SIN
@@ -20,12 +20,13 @@ line level    source
   10          void transmit_string(char* str,unsigned int  n);
   11          void init_serial();
   12          void outputTone(unsigned int inputInt);
-  13          float fillTable(int z);
-  14          unsigned int table[24];
+  13          //unsigned int fillTable(int z);
+  14          code unsigned int table[24]= {2047,2577,3070,3494,3820,4024,4094,4024,3820,3494,3070,2577,2047,1517,1023,5
+             -99,274,70,0,70,274,600,1023,1517};
   15          
   16          float spi_out=0;
-  17          int k=0;
-  18          unsigned int dacval;i=0;
+  17          unsigned int k=0,i=0;
+  18          unsigned int dacval;
   19          unsigned char serial;
   20          //code int sin[500];
   21          
@@ -47,409 +48,416 @@ line level    source
   37   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
   38   1        //EA = 1;
   39   1      }
-  40          void init_table(void)
+  40          /*void init_table(void)
   41          {
-  42   1      if(i==0){table[i]=2047;}if(i==1){table[i]=2577;}if(i==2){table[i]=3070;}if(i==3){table[i]=3494;}if(i==4){t
-             -able[i]=3820;}if(i==5){table[i]=4024;}
-  43   1      if(i==6){table[i]=4094;}if(i==7){table[i]=4024;}if(i==8){table[i]=3820;}if(i==9){table[i]=3494;}if(i==10){
+  42          /*if(i==0){table[i]=2047;}if(i==1){table[i]=2577;}if(i==2){table[i]=3070;}if(i==3){table[i]=3494;}if(i==4)
+             -{table[i]=3820;}if(i==5){table[i]=4024;}
+  43          if(i==6){table[i]=4094;}if(i==7){table[i]=4024;}if(i==8){table[i]=3820;}if(i==9){table[i]=3494;}if(i==10){
              -table[i]=3070;}if(i==11){table[i]=2577;}
-  44   1      if(i==12){table[i]=2047;}if(i==13){table[i]=1517;}if(i==14){table[i]=1023;}if(i==15){table[i]=599;}if(i==1
+  44          if(i==12){table[i]=2047;}if(i==13){table[i]=1517;}if(i==14){table[i]=1023;}if(i==15){table[i]=599;}if(i==1
              -6){table[i]=274;}if(i==17){table[i]=70;}
-  45   1      if(i==18){table[i]=0;}if(i==19){table[i]=70;}if(i==20){table[i]=274;}if(i==21){table[i]=600;}if(i==22){tab
+  45          if(i==18){table[i]=0;}if(i==19){table[i]=70;}if(i==20){table[i]=274;}if(i==21){table[i]=600;}if(i==22){tab
              -le[i]=1023;}if(i==23){table[i]=1517;}
-  46   1      }
-  47          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
-  48          {
-  49   1        switch  ( SPSTA )         /* read and clear spi status register */
-  50   1        {
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 2   
+  46          
+  47          //for(i=0;i<36;i++)
+  48            //table[i] = fillTable(i);
+  49          }*/
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 2   
 
-  51   2          case 0x80:
-  52   2            serial=SPDAT; 
-  53   2            transmit_completed=1;/* set software flag */
-  54   2          break;
-  55   2      
-  56   2          case 0x10:
-  57   2               /* put here for mode fault tasking */  
-  58   2          break;
-  59   2        
-  60   2          case 0x40:
-  61   2               /* put here for overrun tasking */ 
-  62   2          break;
-  63   2        }
-  64   1      }
-  65          
-  66          
-  67          void dac(unsigned int dacval)
-  68          {int z= 0;
-  69   1        for(z=0;z<2;z++)
-  70   1        {
-  71   2        unsigned char sendval = 0;
-  72   2          //LDAC_BAR = 0;
-  73   2        sendval = (dacval >> 8) | 0x70;
-  74   2        CS_BAR = 0;                 // enable ADC as slave       
-  75   2        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-  76   2        while(!transmit_completed); // wait end of transmition  
-  77   2        transmit_completed = 0;     // clear software transfer flag 
-  78   2        sendval = dacval;
-  79   2        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-  80   2        while(!transmit_completed); // wait end of transmition  
-  81   2        transmit_completed = 0;     // clear software transfer flag 
-  82   2        CS_BAR = 1;
-  83   2        }
-  84   1        //LDAC_BAR=1;
-  85   1      }
-  86          void main()
-  87          {
-  88   1      
-  89   1        P2 = 0x00;                      // Make Port 2 output 
-  90   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
-  91   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
-  92   1        P1 |= 0xF0;
-  93   1        
-  94   1        SPI_Init();
-  95   1      init_serial();
-  96   1        init_table();
-  97   1      transmit_string("Tone Generator",14);
-  98   1      
-  99   1      while(1)
- 100   1      {
- 101   2        ////////////////////////////////////////first
- 102   2        if(input=='z'){delayMul = 4;}
- 103   2        if(input=='x'){delayMul = 2;}
- 104   2        if(input=='c'){delayMul = 1;}
- 105   2        ///////////////////////////////////////////////third
- 106   2        while(input=='g') 
- 107   2        {
- 108   3          //transmit_string("g ",2);
- 109   3          outputTone(454);
- 110   3          //input =0;
- 111   3          ////transmit_string("done ",4);
- 112   3        }
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 3   
+  50          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+  51          {
+  52   1        switch  ( SPSTA )         /* read and clear spi status register */
+  53   1        {
+  54   2          case 0x80:
+  55   2            serial=SPDAT; 
+  56   2            transmit_completed=1;/* set software flag */
+  57   2          break;
+  58   2      
+  59   2          case 0x10:
+  60   2               /* put here for mode fault tasking */  
+  61   2          break;
+  62   2        
+  63   2          case 0x40:
+  64   2               /* put here for overrun tasking */ 
+  65   2          break;
+  66   2        }
+  67   1      }
+  68          
+  69          
+  70          void dac(unsigned int dacval)
+  71          {int z= 0;
+  72   1        for(z=0;z<2;z++)
+  73   1        {
+  74   2        unsigned char sendval = 0;
+  75   2          //LDAC_BAR = 0;
+  76   2        sendval = (dacval >> 8) | 0x70;
+  77   2        CS_BAR = 0;                 // enable ADC as slave       
+  78   2        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  79   2        while(!transmit_completed); // wait end of transmition  
+  80   2        transmit_completed = 0;     // clear software transfer flag 
+  81   2        sendval = dacval;
+  82   2        SPDAT = sendval;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  83   2        while(!transmit_completed); // wait end of transmition  
+  84   2        transmit_completed = 0;     // clear software transfer flag 
+  85   2        CS_BAR = 1;
+  86   2        }
+  87   1        //LDAC_BAR=1;
+  88   1      }
+  89          void main()
+  90          {
+  91   1      
+  92   1        P2 = 0x00;                      // Make Port 2 output 
+  93   1        //P1 &= 0xEF;                     // Make P1 Pin4-7 output
+  94   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+  95   1        P1 |= 0xF0;
+  96   1        
+  97   1        SPI_Init();
+  98   1      init_serial();
+  99   1      //  init_table();
+ 100   1      transmit_string("Tone Generator",14);
+ 101   1      
+ 102   1      while(1)
+ 103   1      {
+ 104   2        ////////////////////////////////////////first
+ 105   2        if(input=='z'){delayMul = 4;}
+ 106   2        if(input=='x'){delayMul = 2;}
+ 107   2        if(input=='c'){delayMul = 1;}
+ 108   2        ///////////////////////////////////////////////third
+ 109   2        while(input=='g') 
+ 110   2        {
+ 111   3          //transmit_string("g ",2);
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 3   
 
- 113   2        while(input=='h') 
- 114   2        {
- 115   3          //transmit_string("h ",2);
- 116   3          outputTone(405);
- 117   3          //input =0;
- 118   3        }
- 119   2        while(input=='j') 
- 120   2        {
- 121   3          //transmit_string("j ",2);
- 122   3          outputTone(382);
- 123   3          //input =0;
- 124   3        }
- 125   2        while(input=='k') 
- 126   2        {
- 127   3          //transmit_string("k ",2);
- 128   3          outputTone(340);
- 129   3          //input =0;
- 130   3        }
- 131   2        while(input=='l') 
- 132   2        {
- 133   3          //transmit_string("l ",2);
- 134   3          outputTone(303);
- 135   3          //input =0;
- 136   3        }
- 137   2        while(input=='q') 
- 138   2        {
- 139   3          //transmit_string("q ",2);
- 140   3          outputTone(286);
- 141   3          //input =0;
- 142   3        }
- 143   2        while(input=='w') 
- 144   2        {
- 145   3          //transmit_string("w ",2);
- 146   3          outputTone(255);
- 147   3          //input =0;
- 148   3        }
- 149   2        /////////////////////////////////////////fourth
- 150   2        while(input=='e') 
- 151   2        {
- 152   3          //transmit_string("e ",2);
- 153   3          outputTone(227);
- 154   3          ////input =0;
- 155   3          //transmit_string("done ",4);
- 156   3        }
- 157   2        while(input=='r') 
- 158   2        {
- 159   3          //transmit_string("r ",2);
- 160   3          outputTone(202);
- 161   3          ////input =0;
- 162   3        }
- 163   2        while(input=='t') 
- 164   2        {
- 165   3          //transmit_string("t ",2);
- 166   3          outputTone(191);
- 167   3          ////input =0;
- 168   3        }
- 169   2        while(input=='y') 
- 170   2        {
- 171   3          //transmit_string("y ",2);
- 172   3          outputTone(170);
- 173   3          ////input =0;
- 174   3        }
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 4   
+ 112   3          outputTone(454);
+ 113   3          //input =0;
+ 114   3          ////transmit_string("done ",4);
+ 115   3        }
+ 116   2        while(input=='h') 
+ 117   2        {
+ 118   3          //transmit_string("h ",2);
+ 119   3          outputTone(405);
+ 120   3          //input =0;
+ 121   3        }
+ 122   2        while(input=='j') 
+ 123   2        {
+ 124   3          //transmit_string("j ",2);
+ 125   3          outputTone(382);
+ 126   3          //input =0;
+ 127   3        }
+ 128   2        while(input=='k') 
+ 129   2        {
+ 130   3          //transmit_string("k ",2);
+ 131   3          outputTone(340);
+ 132   3          //input =0;
+ 133   3        }
+ 134   2        while(input=='l') 
+ 135   2        {
+ 136   3          //transmit_string("l ",2);
+ 137   3          outputTone(303);
+ 138   3          //input =0;
+ 139   3        }
+ 140   2        while(input=='q') 
+ 141   2        {
+ 142   3          //transmit_string("q ",2);
+ 143   3          outputTone(286);
+ 144   3          //input =0;
+ 145   3        }
+ 146   2        while(input=='w') 
+ 147   2        {
+ 148   3          //transmit_string("w ",2);
+ 149   3          outputTone(255);
+ 150   3          //input =0;
+ 151   3        }
+ 152   2        /////////////////////////////////////////fourth
+ 153   2        while(input=='e') 
+ 154   2        {
+ 155   3          //transmit_string("e ",2);
+ 156   3          outputTone(227);
+ 157   3          ////input =0;
+ 158   3          //transmit_string("done ",4);
+ 159   3        }
+ 160   2        while(input=='r') 
+ 161   2        {
+ 162   3          //transmit_string("r ",2);
+ 163   3          outputTone(202);
+ 164   3          ////input =0;
+ 165   3        }
+ 166   2        while(input=='t') 
+ 167   2        {
+ 168   3          //transmit_string("t ",2);
+ 169   3          outputTone(191);
+ 170   3          ////input =0;
+ 171   3        }
+ 172   2        while(input=='y') 
+ 173   2        {
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 4   
 
- 175   2        while(input=='u') 
- 176   2        {
- 177   3          //transmit_string("u ",2);
- 178   3          outputTone(151);
- 179   3          //input =0;
- 180   3        }
- 181   2        while(input=='i') 
- 182   2        {
- 183   3          //transmit_string("i ",2);
- 184   3          outputTone(143);
- 185   3          //input =0;
- 186   3        }
- 187   2        while(input=='o') 
- 188   2        {
- 189   3          //transmit_string("o ",2);
- 190   3          outputTone(127);
- 191   3          //input =0;
- 192   3        }
- 193   2        //////////////////////////////////////////////////////// only p
- 194   2        while(input=='p') 
- 195   2        {
- 196   3          //transmit_string("p ",2);
- 197   3          outputTone(114);
- 198   3          //input =0;
- 199   3        }
- 200   2        ///////////////////////////////////////    middle black ones part-1 of 2
- 201   2        while(input=='!') 
- 202   2        {
- 203   3          //transmit_string("1 ",2);
- 204   3          outputTone(1716);
- 205   3          //input =0;
- 206   3          //transmit_string("done ",4);
- 207   3        }
- 208   2        while(input=='@') 
- 209   2        {
- 210   3          //transmit_string("2 ",2);
- 211   3          outputTone(1443);
- 212   3          //input =0;
- 213   3        }
- 214   2        while(input=='#') 
- 215   2        {
- 216   3          //transmit_string("3 ",2);
- 217   3          outputTone(1286);
- 218   3          //input =0;
- 219   3        }
- 220   2        while(input=='$') 
- 221   2        {
- 222   3          //transmit_string("4 ",2);
- 223   3          outputTone(1081);
- 224   3          //input =0;
- 225   3        }
- 226   2        while(input=='%') 
- 227   2        {
- 228   3          //transmit_string("5 ",2);
- 229   3          outputTone(963);
- 230   3          //input =0;
- 231   3        }
- 232   2        while(input=='^') 
- 233   2        {
- 234   3          //transmit_string("6 ",2);
- 235   3          outputTone(858);
- 236   3          //input =0;
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 5   
+ 174   3          //transmit_string("y ",2);
+ 175   3          outputTone(170);
+ 176   3          ////input =0;
+ 177   3        }
+ 178   2        while(input=='u') 
+ 179   2        {
+ 180   3          //transmit_string("u ",2);
+ 181   3          outputTone(151);
+ 182   3          //input =0;
+ 183   3        }
+ 184   2        while(input=='i') 
+ 185   2        {
+ 186   3          //transmit_string("i ",2);
+ 187   3          outputTone(143);
+ 188   3          //input =0;
+ 189   3        }
+ 190   2        while(input=='o') 
+ 191   2        {
+ 192   3          //transmit_string("o ",2);
+ 193   3          outputTone(127);
+ 194   3          //input =0;
+ 195   3        }
+ 196   2        //////////////////////////////////////////////////////// only p
+ 197   2        while(input=='p') 
+ 198   2        {
+ 199   3          //transmit_string("p ",2);
+ 200   3          outputTone(114);
+ 201   3          //input =0;
+ 202   3        }
+ 203   2        ///////////////////////////////////////    middle black ones part-1 of 2
+ 204   2        while(input=='!') 
+ 205   2        {
+ 206   3          //transmit_string("1 ",2);
+ 207   3          outputTone(1716);
+ 208   3          //input =0;
+ 209   3          //transmit_string("done ",4);
+ 210   3        }
+ 211   2        while(input=='@') 
+ 212   2        {
+ 213   3          //transmit_string("2 ",2);
+ 214   3          outputTone(1443);
+ 215   3          //input =0;
+ 216   3        }
+ 217   2        while(input=='#') 
+ 218   2        {
+ 219   3          //transmit_string("3 ",2);
+ 220   3          outputTone(1286);
+ 221   3          //input =0;
+ 222   3        }
+ 223   2        while(input=='$') 
+ 224   2        {
+ 225   3          //transmit_string("4 ",2);
+ 226   3          outputTone(1081);
+ 227   3          //input =0;
+ 228   3        }
+ 229   2        while(input=='%') 
+ 230   2        {
+ 231   3          //transmit_string("5 ",2);
+ 232   3          outputTone(963);
+ 233   3          //input =0;
+ 234   3        }
+ 235   2        while(input=='^') 
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 5   
 
- 237   3        }
- 238   2        while(input=='&') 
- 239   2        {
- 240   3          //transmit_string("7 ",2);
- 241   3          outputTone(722);
- 242   3          //input =0;
- 243   3        }
- 244   2        while(input=='*') 
- 245   2        {
- 246   3          //transmit_string("8 ",2);
- 247   3          outputTone(643);
- 248   3          //input =0;
- 249   3        }
- 250   2        while(input=='(') 
- 251   2        {
- 252   3          //transmit_string("9 ",2);
- 253   3          outputTone(540);
- 254   3          //input =0;
- 255   3        }
- 256   2        while(input==')') 
- 257   2        {
- 258   3          //transmit_string("0 ",2);
- 259   3          outputTone(482);
- 260   3          //input =0;
- 261   3        }
- 262   2        //////////////////////////////////////////// middle black ones part2 of 2
- 263   2        while(input=='1') 
- 264   2        {
- 265   3          //transmit_string("! ",2);
- 266   3          outputTone(429);
- 267   3          //input =0;
- 268   3          //transmit_string("done ",4);
- 269   3        }
- 270   2        while(input=='2') 
- 271   2        {
- 272   3          //transmit_string("@ ",2);
- 273   3          outputTone(361);
- 274   3          //input =0;
- 275   3        }
- 276   2        while(input=='3') 
- 277   2        {
- 278   3          //transmit_string("# ",2);
- 279   3          outputTone(321);
- 280   3          //input =0;
- 281   3        }
- 282   2        while(input=='4') 
- 283   2        {
- 284   3          //transmit_string("$ ",2);
- 285   3          outputTone(270);
- 286   3          //input =0;
- 287   3        }
- 288   2        while(input=='5') 
- 289   2        {
- 290   3          //transmit_string("% ",2);
- 291   3          outputTone(241);
- 292   3          //input =0;
- 293   3        }
- 294   2        while(input=='6') 
- 295   2        {
- 296   3          //transmit_string("^ ",2);
- 297   3          outputTone(214);
- 298   3          //input =0;
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 6   
+ 236   2        {
+ 237   3          //transmit_string("6 ",2);
+ 238   3          outputTone(858);
+ 239   3          //input =0;
+ 240   3        }
+ 241   2        while(input=='&') 
+ 242   2        {
+ 243   3          //transmit_string("7 ",2);
+ 244   3          outputTone(722);
+ 245   3          //input =0;
+ 246   3        }
+ 247   2        while(input=='*') 
+ 248   2        {
+ 249   3          //transmit_string("8 ",2);
+ 250   3          outputTone(643);
+ 251   3          //input =0;
+ 252   3        }
+ 253   2        while(input=='(') 
+ 254   2        {
+ 255   3          //transmit_string("9 ",2);
+ 256   3          outputTone(540);
+ 257   3          //input =0;
+ 258   3        }
+ 259   2        while(input==')') 
+ 260   2        {
+ 261   3          //transmit_string("0 ",2);
+ 262   3          outputTone(482);
+ 263   3          //input =0;
+ 264   3        }
+ 265   2        //////////////////////////////////////////// middle black ones part2 of 2
+ 266   2        while(input=='1') 
+ 267   2        {
+ 268   3          //transmit_string("! ",2);
+ 269   3          outputTone(429);
+ 270   3          //input =0;
+ 271   3          //transmit_string("done ",4);
+ 272   3        }
+ 273   2        while(input=='2') 
+ 274   2        {
+ 275   3          //transmit_string("@ ",2);
+ 276   3          outputTone(361);
+ 277   3          //input =0;
+ 278   3        }
+ 279   2        while(input=='3') 
+ 280   2        {
+ 281   3          //transmit_string("# ",2);
+ 282   3          outputTone(321);
+ 283   3          //input =0;
+ 284   3        }
+ 285   2        while(input=='4') 
+ 286   2        {
+ 287   3          //transmit_string("$ ",2);
+ 288   3          outputTone(270);
+ 289   3          //input =0;
+ 290   3        }
+ 291   2        while(input=='5') 
+ 292   2        {
+ 293   3          //transmit_string("% ",2);
+ 294   3          outputTone(241);
+ 295   3          //input =0;
+ 296   3        }
+ 297   2        while(input=='6') 
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 6   
 
- 299   3        }
- 300   2        while(input=='7') 
- 301   2        {
- 302   3          //transmit_string("& ",2);
- 303   3          outputTone(180);
- 304   3          //input =0;
- 305   3        }
- 306   2        while(input=='8') 
- 307   2        {
- 308   3          //transmit_string("* ",2);
- 309   3          outputTone(161);
- 310   3          //input =0;
- 311   3        }
- 312   2        while(input=='9') 
- 313   2        {
- 314   3          //transmit_string("( ",2);
- 315   3          outputTone(135);
- 316   3          //input =0;
- 317   3        }
- 318   2        while(input=='0') 
- 319   2        {
- 320   3          //transmit_string(") ",2);
- 321   3          outputTone(120);
- 322   3          //input =0;
- 323   3        }
- 324   2      }
- 325   1      
- 326   1      }
- 327          //-----------------------------------------outputTone-----------------------------
- 328          void outputTone(unsigned int inputInt)
- 329          {
- 330   1        //x=10000/(inputInt*delayMul);
- 331   1        //while(x>0)
- 332   1        //{
- 333   1          /*for(i=0;i<24;i++)
- 334   1          {
- 335   1          //spi_out= fillTable(i);
- 336   1          //spi_out = 2047*(1+spi_out); 
- 337   1            if(i==0){dac(2047);}if(i==1){dac(2577);}if(i==2){dac(3070);}if(i==3){dac(3494);}if(i==4){dac(3820);}if(
+ 298   2        {
+ 299   3          //transmit_string("^ ",2);
+ 300   3          outputTone(214);
+ 301   3          //input =0;
+ 302   3        }
+ 303   2        while(input=='7') 
+ 304   2        {
+ 305   3          //transmit_string("& ",2);
+ 306   3          outputTone(180);
+ 307   3          //input =0;
+ 308   3        }
+ 309   2        while(input=='8') 
+ 310   2        {
+ 311   3          //transmit_string("* ",2);
+ 312   3          outputTone(161);
+ 313   3          //input =0;
+ 314   3        }
+ 315   2        while(input=='9') 
+ 316   2        {
+ 317   3          //transmit_string("( ",2);
+ 318   3          outputTone(135);
+ 319   3          //input =0;
+ 320   3        }
+ 321   2        while(input=='0') 
+ 322   2        {
+ 323   3          //transmit_string(") ",2);
+ 324   3          outputTone(120);
+ 325   3          //input =0;
+ 326   3        }
+ 327   2      }
+ 328   1      
+ 329   1      }
+ 330          //-----------------------------------------outputTone-----------------------------
+ 331          void outputTone(unsigned int inputInt)
+ 332          {
+ 333   1        //x=10000/(inputInt*delayMul);
+ 334   1        //while(x>0)
+ 335   1        //{
+ 336   1          /*for(i=0;i<24;i++)
+ 337   1          {
+ 338   1          //spi_out= fillTable(i);
+ 339   1          //spi_out = 2047*(1+spi_out); 
+ 340   1            if(i==0){dac(2047);}if(i==1){dac(2577);}if(i==2){dac(3070);}if(i==3){dac(3494);}if(i==4){dac(3820);}if(
              -i==5){dac(4024);}
- 338   1      if(i==6){dac(4094);}if(i==7){dac(4024);}if(i==8){dac(3820);}if(i==9){dac(3494);}if(i==10){dac(3070);}if(i=
+ 341   1      if(i==6){dac(4094);}if(i==7){dac(4024);}if(i==8){dac(3820);}if(i==9){dac(3494);}if(i==10){dac(3070);}if(i=
              -=11){dac(2577);}
- 339   1      if(i==12){dac(2047);}if(i==13){dac(1517);}if(i==14){dac(1023);}if(i==15){dac(599);}if(i==16){dac(274);}if(
+ 342   1      if(i==12){dac(2047);}if(i==13){dac(1517);}if(i==14){dac(1023);}if(i==15){dac(599);}if(i==16){dac(274);}if(
              -i==17){dac(70);}
- 340   1      if(i==18){dac(0);}if(i==19){dac(70);}if(i==20){dac(274);}if(i==21){dac(600);}if(i==22){dac(1023);}if(i==23
+ 343   1      if(i==18){dac(0);}if(i==19){dac(70);}if(i==20){dac(274);}if(i==21){dac(600);}if(i==22){dac(1023);}if(i==23
              -){dac(1517);}
- 341   1          //dac(dacval);
- 342   1          delay_5us(inputInt*delayMul*0.0416667);
- 343   1          }*/
- 344   1        for(k=0;k<24;k++)
- 345   1          {
- 346   2          dac(table[k]);
- 347   2          delay_5us(inputInt*delayMul*0.0416667);
- 348   2          }
- 349   1          //x--;
- 350   1        //}
- 351   1      }
- 352          //-----------------------------------------receive_data---------------------------
- 353          void receive_data(void) interrupt 4
- 354          {
- 355   1      if(RI==1)
- 356   1      {
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 7   
+ 344   1          //dac(dacval);
+ 345   1          delay_5us(inputInt*delayMul*0.0416667);
+ 346   1          }*/
+ 347   1        for(k=0;k<24;k++)
+ 348   1          {
+ 349   2          dac(table[k]);
+ 350   2          delay_5us(inputInt*delayMul*0.0041667);
+ 351   2          }
+ 352   1          //x--;
+ 353   1        //}
+ 354   1      }
+ 355          //-----------------------------------------receive_data---------------------------
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 7   
 
- 357   2        RI=0;
- 358   2        input = SBUF;
- 359   2      
- 360   2      }
- 361   1      else if(TI==1)
- 362   1      {
- 363   2        TI=0;
- 364   2      }
- 365   1      }
- 366          //////////////////////////////////////////////////////////////////////////////////
- 367          void transmit_string(char* str,unsigned char  n)
- 368          {
-*** WARNING C235 IN LINE 368 OF keypad_sin.c: parameter 2: different types
- 369   1      //function to transmit string of size n over TxD pin.
- 370   1      while(n>0)
- 371   1        {
- 372   2          transmit_data(*str);
- 373   2          str++;
- 374   2          n--;
- 375   2          TI=0;
- 376   2        }
- 377   1      }
- 378          ////////////////////////////////////////////////////////////////////////////////////////
- 379          void transmit_data(unsigned char str)
- 380          {
- 381   1      //function to transmit data over TxD pin.
- 382   1        EA = 0; 
- 383   1        ACC = str;
- 384   1        ACC = ACC+0;
- 385   1        TB8 = PSW^0;
- 386   1        SBUF = str;
- 387   1        while(TI==0);
- 388   1        EA =1;
- 389   1      }
- 390          //////////////////////////////////////////////////////////////////////////////////////////
- 391          void init_serial()
- 392          {
- 393   1      //Initialize serial communication and interrupts
- 394   1        SCON |= 0xD0;
- 395   1        EA = 1;
- 396   1        ES =1;
- 397   1        TMOD |= 0x20;
- 398   1        TH1 = 0xcc;
- 399   1        TR1 = 1;
- 400   1      }
- 401          ////////////////////////////////////////////////////////////////////////////////////////////
- 402          void delay_5us(int delay)
- 403          {
- 404   1        int d=0;
- 405   1        while(delay>0)
- 406   1        {
- 407   2          for(d=0;d<2;d++);
- 408   2          delay--;
- 409   2        }
- 410   1      }
- 411            
+ 356          void receive_data(void) interrupt 4
+ 357          {
+ 358   1      if(RI==1)
+ 359   1      {
+ 360   2        RI=0;
+ 361   2        input = SBUF;
+ 362   2      
+ 363   2      }
+ 364   1      else if(TI==1)
+ 365   1      {
+ 366   2        TI=0;
+ 367   2      }
+ 368   1      }
+ 369          //////////////////////////////////////////////////////////////////////////////////
+ 370          void transmit_string(char* str,unsigned char  n)
+ 371          {
+*** WARNING C235 IN LINE 371 OF keypad_sin.c: parameter 2: different types
+ 372   1      //function to transmit string of size n over TxD pin.
+ 373   1      while(n>0)
+ 374   1        {
+ 375   2          transmit_data(*str);
+ 376   2          str++;
+ 377   2          n--;
+ 378   2          TI=0;
+ 379   2        }
+ 380   1      }
+ 381          ////////////////////////////////////////////////////////////////////////////////////////
+ 382          void transmit_data(unsigned char str)
+ 383          {
+ 384   1      //function to transmit data over TxD pin.
+ 385   1        EA = 0; 
+ 386   1        ACC = str;
+ 387   1        ACC = ACC+0;
+ 388   1        TB8 = PSW^0;
+ 389   1        SBUF = str;
+ 390   1        while(TI==0);
+ 391   1        EA =1;
+ 392   1      }
+ 393          //////////////////////////////////////////////////////////////////////////////////////////
+ 394          void init_serial()
+ 395          {
+ 396   1      //Initialize serial communication and interrupts
+ 397   1        SCON |= 0xD0;
+ 398   1        EA = 1;
+ 399   1        ES =1;
+ 400   1        TMOD |= 0x20;
+ 401   1        TH1 = 0xcc;
+ 402   1        TR1 = 1;
+ 403   1      }
+ 404          ////////////////////////////////////////////////////////////////////////////////////////////
+ 405          void delay_5us(int delay)
+ 406          {
+ 407   1        int d=0;
+ 408   1        while(delay>0)
+ 409   1        {
+ 410   2          for(d=0;d<2;d++);
+ 411   2          delay--;
+ 412   2        }
+ 413   1      }
+ 414          /*unsigned int fillTable(unsigned int z)
+ 415          {
+ 416               return 2046*(1+sin(2.0*3.1415927*z*0.02778));
+C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/10/2017 16:37:50 PAGE 8   
+
+ 417          }*/
+ 418            
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1454    ----
-   CONSTANT SIZE    =     15    ----
+   CODE SIZE        =    985    ----
+   CONSTANT SIZE    =     63    ----
    XDATA SIZE       =   ----    ----
-C51 COMPILER V9.56.0.0   KEYPAD_SIN                                                        10/09/2017 17:28:46 PAGE 8   
-
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     65       7
+   DATA SIZE        =     17       7
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1    ----
 END OF MODULE INFORMATION.
